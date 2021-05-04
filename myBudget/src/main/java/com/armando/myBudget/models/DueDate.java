@@ -13,8 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="dueDates")
@@ -25,7 +26,8 @@ public class DueDate {
     private Long id;
     
     @NotNull
-    @Size(min=1, message="Please enter a due date")
+    @Min(value=1, message="Please enter a valid date")
+    @Max(value=31, message="Please enter a valid date(1-31)")
     private Integer date;
     
     @Column(updatable=false)

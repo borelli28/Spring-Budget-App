@@ -1,8 +1,8 @@
 package com.armando.myBudget;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.armando.myBudget.controllers.UserController;
+import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.Role;
 import com.armando.myBudget.models.User;
@@ -112,6 +113,24 @@ class MyBudgetApplicationTests {
 		expense.setAmount(null);
 		Set<ConstraintViolation<Expense>> violationsTwo = validator.validate(expense);
 		assertFalse( violationsTwo.isEmpty(), "Invalid Expense attributes did not trigger validations errors");
+	}
+	
+	@Test
+	void testDueDateModel() {
+		DueDate dueDate = new DueDate();
+		
+		// check for a valid date
+		dueDate.setDate(11);
+		Set<ConstraintViolation<DueDate>> violations = validator.validate(dueDate);
+		for (ConstraintViolation<DueDate> violation : violations) {
+			System.out.println(violation.getMessage());
+		}
+		assertTrue(violations.isEmpty(), "When passed a valid Due Date it returns an validation error");
+		
+		// check for invalid date
+		dueDate.setDate(45);
+		Set<ConstraintViolation<DueDate>> violationsTwo = validator.validate(dueDate);
+		assertFalse( violationsTwo.isEmpty(), "When passed an invalid date it did not trigger a validation errors");
 	}
 
 }
