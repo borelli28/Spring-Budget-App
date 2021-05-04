@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.armando.myBudget.controllers.UserController;
+import com.armando.myBudget.models.Role;
 import com.armando.myBudget.models.User;
 
 @SpringBootTest // test class
@@ -61,6 +62,35 @@ class MyBudgetApplicationTests {
 			System.out.println(violation.getMessage());
 		}
 		assertTrue(violations.isEmpty());
+		
+		//checks that invalids inputs trigger all possible validations errors(4)
+		user.setFirstName("");
+		user.setLastName("");
+		user.setEmail("s");
+		user.setPassword("s");
+		user.setPasswordConfirmation("0");
+		
+		Set<ConstraintViolation<User>> violationsTwo = validator.validate(user);
+		assertTrue(violationsTwo.size() >= 4, "User model validations error were not triggered by our invalid inputs"); 
+	}
+	
+	@Test
+	void testRoleModel() {
+		Role role = new Role();
+		
+		// checks that a valid name creates a new Role
+		role.setName("GUEST");
+		Set<ConstraintViolation<Role>> violations = validator.validate(role);
+		for (ConstraintViolation<Role> violation : violations) {
+			System.out.println(violation.getMessage());
+		}
+		assertTrue(violations.isEmpty());
+		
+		// check that an empty name triggers the validation error
+		role.setName("");
+		Set<ConstraintViolation<Role>> violationsTwo = validator.validate(role);
+		assertTrue(!violationsTwo.isEmpty(), "Role name validation did not trigger when passed an empty String");
+		
 	}
 
 }

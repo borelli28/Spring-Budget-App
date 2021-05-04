@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="roles")
@@ -14,7 +15,10 @@ public class Role {
     @Id
     @GeneratedValue
     private Long id;
+    
+    @Size(min=1, message="Please enter a valid Role name")
     private String name;
+    
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
     
