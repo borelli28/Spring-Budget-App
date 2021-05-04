@@ -1,4 +1,4 @@
-package com.armando.myBudget.models;
+ package com.armando.myBudget.models;
 
 import java.util.Date;
 import java.util.List;
@@ -29,8 +29,7 @@ public class Expense {
     @Size(min=1, message="Please enter a title")
     private String title;
     
-    @NotNull
-    @Size(min=1, message="Please enter an amount")
+    @NotNull(message="Please enter an amount")
     private Double amount;
     
     // many to one rel with user
@@ -111,6 +110,7 @@ public class Expense {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+	
 
 	@PrePersist
     protected void onCreate(){

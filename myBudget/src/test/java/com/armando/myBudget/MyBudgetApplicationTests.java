@@ -2,6 +2,7 @@ package com.armando.myBudget;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.armando.myBudget.controllers.UserController;
+import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.Role;
 import com.armando.myBudget.models.User;
 
@@ -61,7 +63,7 @@ class MyBudgetApplicationTests {
 		for (ConstraintViolation<User> violation : violations) {
 			System.out.println(violation.getMessage());
 		}
-		assertTrue(violations.isEmpty());
+		assertTrue(violations.isEmpty(), "When passed valid User attributes it did trigger some validations errors");
 		
 		//checks that invalids inputs trigger all possible validations errors(4)
 		user.setFirstName("");
@@ -71,7 +73,7 @@ class MyBudgetApplicationTests {
 		user.setPasswordConfirmation("0");
 		
 		Set<ConstraintViolation<User>> violationsTwo = validator.validate(user);
-		assertTrue(violationsTwo.size() >= 4, "User model validations error were not triggered by our invalid inputs"); 
+		assertFalse(violationsTwo.isEmpty(), "User model validations error were not triggered by our invalid inputs"); 
 	}
 	
 	@Test
@@ -84,13 +86,32 @@ class MyBudgetApplicationTests {
 		for (ConstraintViolation<Role> violation : violations) {
 			System.out.println(violation.getMessage());
 		}
-		assertTrue(violations.isEmpty());
+		assertTrue(violations.isEmpty(), "When passed a valid Role name it did trigger some validations errors");
 		
 		// check that an empty name triggers the validation error
 		role.setName("");
 		Set<ConstraintViolation<Role>> violationsTwo = validator.validate(role);
-		assertTrue(!violationsTwo.isEmpty(), "Role name validation did not trigger when passed an empty String");
+		assertFalse(violationsTwo.isEmpty(), "Role name validation did not trigger when passed an empty String");
+	}
+	
+	@Test
+	void testExpenseModel() {
+		Expense expense = new Expense();
 		
+		// test for valid attributes
+		expense.setTitle("My expense title");
+		expense.setAmount(12.00);
+		Set<ConstraintViolation<Expense>> violations = validator.validate(expense);
+		for (ConstraintViolation<Expense> violation : violations) {
+			System.out.println(violation.getMessage());
+		}
+		assertTrue(violations.isEmpty(), "When passed a valid Expense attributes it did trigger some validations errors");
+		
+		// check for invalid attributes to trigger the validation errors
+		expense.setTitle("");
+		expense.setAmount(null);
+		Set<ConstraintViolation<Expense>> violationsTwo = validator.validate(expense);
+		assertFalse( violationsTwo.isEmpty(), "Invalid Expense attributes did not trigger validations errors");
 	}
 
 }
