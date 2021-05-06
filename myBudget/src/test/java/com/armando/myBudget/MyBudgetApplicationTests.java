@@ -1,6 +1,5 @@
 package com.armando.myBudget;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,10 +12,10 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import com.armando.myBudget.controllers.UserController;
 import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.Role;
@@ -24,9 +23,6 @@ import com.armando.myBudget.models.User;
 
 @SpringBootTest // test class
 class MyBudgetApplicationTests {
-
-	@Autowired
-	private UserController userController;
 	
 	private static Validator validator;
 	
@@ -36,19 +32,12 @@ class MyBudgetApplicationTests {
 		validator = factory.getValidator();
 	}
 	
-	
-	@Test // test case
-	void contextLoads() {
-	}
-	
-	@Test
-	void testUserController() {
-		assertThat(userController).isNotNull();
-	}
+	//
+	// MODELS TEST CASES
+	//
 	
 	// Creates an empty instance of the User model and pass it to the validate method of the validator. 
-	// Any violations of the validations we have set on the models,
-	// will be returned as a Set.
+	// Any violations of the validations we have set on the models, will be returned as a Set.
 	// If there is any violations, we can iterate through them and print them to the console.
 	@Test
 	void testUserModel() {
@@ -74,7 +63,7 @@ class MyBudgetApplicationTests {
 		user.setPasswordConfirmation("0");
 		
 		Set<ConstraintViolation<User>> violationsTwo = validator.validate(user);
-		assertFalse(violationsTwo.isEmpty(), "User model validations error were not triggered by our invalid inputs"); 
+		assertFalse(violationsTwo.isEmpty(), "User model validations error were not triggered by our invalid inputs");
 	}
 	
 	@Test
@@ -132,5 +121,9 @@ class MyBudgetApplicationTests {
 		Set<ConstraintViolation<DueDate>> violationsTwo = validator.validate(dueDate);
 		assertFalse( violationsTwo.isEmpty(), "When passed an invalid date it did not trigger a validation errors");
 	}
+	
+	//
+	// CONTROLLERS TEST CASES
+	//
 
 }
