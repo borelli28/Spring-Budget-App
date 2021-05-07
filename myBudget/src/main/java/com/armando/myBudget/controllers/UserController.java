@@ -83,7 +83,7 @@ public class UserController {
         String email = principal.getName();
         User user = userService.findByEmail(email);
         
-        // decrypt first and last name of the user
+        // First and Last name of the User is being decrypted so we can display it in the home page
         userService.decryptUser(user);
         model.addAttribute("currentUser", user);
         return "homePage.jsp";

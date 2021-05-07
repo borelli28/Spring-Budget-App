@@ -48,6 +48,10 @@ public class User {
     private Date createdAt;
     private Date updatedAt;
     
+    // each user can have many cash accounts(checking acconut)
+    @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+    private List<CashAcct> cashAccts;
+    
     // each user will have many expenses
     @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
     private List<Expense> expenses;
