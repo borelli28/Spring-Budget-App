@@ -29,11 +29,7 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email);
-        System.out.println("Inside loadByUsername method in UserDetailsServiceImplementation.java");
-        System.out.println("Email:");
-        System.out.println(email);
         if(user == null) {
-        	System.out.println("user not found");
             throw new UsernameNotFoundException("User not found");
         }
         
