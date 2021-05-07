@@ -11,7 +11,7 @@
     <form method="POST" action="/login">
         <p>
             <label for="email">Email</label>
-            <input type="email" id="email" name="email"/>
+            <input id="email" name="username"/>
         </p>
         <p>
             <label for="password">Password</label>
