@@ -66,10 +66,26 @@ public class UserService {
     	user.setLastName(encryptedLastName);
         
         userRepo.save(user);
-    }   
+    }
     
     // Finds a user by their email
     public User findByEmail(String email) {
         return userRepo.findByEmail(email);
+    }
+    
+    // unencrypted user data and return the unencrypted user
+    public User decryptUser(User user) {
+    	User UserDecrypt = user;
+    	// create Encryptor algo instance and enter the password
+    	AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+    	aes256TextEncryptor.setPassword(myKeys.getMelchor());
+    	// decrypt user first name and then assign the plain text first name to the user
+    	String userFirstName = aes256TextEncryptor.decrypt(user.getFirstName());
+    	UserDecrypt.setFirstName(userFirstName);
+    	// decrypt user last name and then assign the plain text last name to the user
+    	String userLastName = aes256TextEncryptor.decrypt(user.getLastName());
+    	UserDecrypt.setLastName(userLastName);
+
+    	return UserDecrypt;
     }
 }
