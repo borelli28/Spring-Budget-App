@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,7 +30,7 @@ public class CashAcct {
     @Size(min=2, max=30, message="Please enter a title 2 - 30 characters long")
     private String title;
     
-    @DecimalMin(value="00.00", message="Please enter a valid amount(12.50)")
+    @Digits(integer=4, fraction=2, message="Please enter a valid amount(12.50)")
     private BigDecimal amount;
 	
     @Column(updatable=false)
@@ -49,6 +49,7 @@ public class CashAcct {
 		this.title = title;
 		this.amount = amount;
 	}
+	
 
 	// getters and setters
 	public Long getId() {
@@ -98,6 +99,7 @@ public class CashAcct {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
 
 	@PrePersist
     protected void onCreate(){

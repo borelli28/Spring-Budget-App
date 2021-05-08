@@ -3,6 +3,7 @@ package com.armando.myBudget;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -13,9 +14,8 @@ import javax.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
+import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.Role;
@@ -120,6 +120,30 @@ class MyBudgetApplicationTests {
 		dueDate.setDate(45);
 		Set<ConstraintViolation<DueDate>> violationsTwo = validator.validate(dueDate);
 		assertFalse( violationsTwo.isEmpty(), "When passed an invalid date it did not trigger a validation errors");
+	}
+	
+	@Test
+	void testCashAcctModel() {
+		CashAcct cashAcct = new CashAcct();
+		
+		// Check for valid attributes
+		cashAcct.setTitle("a title");
+		cashAcct.setAmount(BigDecimal.valueOf(100.25));
+		Set<ConstraintViolation<CashAcct>> violations = validator.validate(cashAcct);
+		for (ConstraintViolation<CashAcct> violation : violations) {
+			System.out.println(violation.getMessage());
+		}
+		assertTrue(violations.isEmpty(), "When passed a valid attributes to CashAcct model it did throw validation errors");
+		
+		// check for invalid attributes
+		cashAcct.setTitle("q");
+		cashAcct.setAmount(BigDecimal.valueOf(100.25345));
+		Set<ConstraintViolation<CashAcct>> violationsTwo = validator.validate(cashAcct);
+//		for (ConstraintViolation<CashAcct> violation : violationsTwo) {
+//			System.out.println(violation.getMessage());
+//		}
+		assertFalse(violationsTwo.isEmpty(), "When passed invalid attributes to CashAcct model it did not throw any validation errors");
+		
 	}
 	
 	//
