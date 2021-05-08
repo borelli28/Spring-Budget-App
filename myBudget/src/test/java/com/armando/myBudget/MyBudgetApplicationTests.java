@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
+import com.armando.myBudget.models.Income;
 import com.armando.myBudget.models.Role;
 import com.armando.myBudget.models.User;
 
@@ -143,6 +144,30 @@ class MyBudgetApplicationTests {
 //			System.out.println(violation.getMessage());
 //		}
 		assertFalse(violationsTwo.isEmpty(), "When passed invalid attributes to CashAcct model it did not throw any validation errors");
+		
+	}
+	
+	@Test
+	void testCashIncomeModel() {
+		Income income = new Income();
+		
+		// Check for valid attributes
+		income.setTitle("a title");
+		income.setAmount(BigDecimal.valueOf(100.25));
+		Set<ConstraintViolation<Income>> violations = validator.validate(income);
+		for (ConstraintViolation<Income> violation : violations) {
+			System.out.println(violation.getMessage());
+		}
+		assertTrue(violations.isEmpty(), "When passed a valid attributes to Income model did throw validation errors");
+		
+		// check for invalid attributes
+		income.setTitle("q");
+		income.setAmount(BigDecimal.valueOf(100.25345));
+		Set<ConstraintViolation<Income>> violationsTwo = validator.validate(income);
+//		for (ConstraintViolation<CashAcct> violation : violationsTwo) {
+//			System.out.println(violation.getMessage());
+//		}
+		assertFalse(violationsTwo.isEmpty(), "When passed invalid attributes to Income model it did not throw any validation errors");
 		
 	}
 	

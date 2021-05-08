@@ -52,6 +52,10 @@ public class User {
     @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
     private List<CashAcct> cashAccts;
     
+    // each user can have many Incomes
+    @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+    private List<Income> userIncomes;
+    
     // each user will have many expenses
     @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
     private List<Expense> expenses;
@@ -76,7 +80,11 @@ public class User {
 
 
 	// getters and setters
-	public Long getId() {
+	@PrePersist
+    protected void onCreate(){
+        this.createdAt = new Date();
+    }
+    public Long getId() {
 		return id;
 	}
 
@@ -140,6 +148,22 @@ public class User {
 		this.updatedAt = updatedAt;
 	}
 
+	public List<CashAcct> getCashAccts() {
+		return cashAccts;
+	}
+
+	public void setCashAccts(List<CashAcct> cashAccts) {
+		this.cashAccts = cashAccts;
+	}
+
+	public List<Income> getIncomes() {
+		return userIncomes;
+	}
+
+	public void setIncomes(List<Income> userIncomes) {
+		this.userIncomes = userIncomes;
+	}
+
 	public List<Expense> getExpenses() {
 		return expenses;
 	}
@@ -157,11 +181,7 @@ public class User {
 	}
 	
 
-	@PrePersist
-    protected void onCreate(){
-        this.createdAt = new Date();
-    }
-    @PreUpdate
+	@PreUpdate
     protected void onUpdate(){
         this.updatedAt = new Date();
     }
