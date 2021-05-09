@@ -16,7 +16,7 @@
     	<nav style="display: flex; justify-content: space-around">
     		<p>Dashboard</p>
     		<p>Dropdown menu</p>
-    		<p>Account</p>
+    		<p><a href="/account">Account</a></p>
     		<form id="logoutForm" method="POST" action="/logout">
 		        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		        <input type="submit" value="Logout!" />

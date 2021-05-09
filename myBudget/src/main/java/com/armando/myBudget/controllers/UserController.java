@@ -12,6 +12,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.armando.myBudget.models.User;
@@ -32,7 +33,7 @@ public class UserController {
 
     @RequestMapping("/registration")
     public String registerForm(@Valid @ModelAttribute("user") User user) {
-        return "registrationPage.jsp";
+        return "user/registrationPage.jsp";
     }
     
     @PostMapping("/registration")
@@ -42,11 +43,11 @@ public class UserController {
     		System.out.println("Null values found... redirecting back to registration page");
     		ObjectError error = new ObjectError("firstName", "<null> values are not allowed");
     		result.addError(error);
-    		return "registrationPage.jsp";
+    		return "user/registrationPage.jsp";
     	}
     	userValidator.validate(user, result);
     	if (result.hasErrors()) {
-            return "registrationPage.jsp";
+            return "user/registrationPage.jsp";
         } else {
             userService.saveUserWithAdminRole(user);
             return "redirect:/login";
@@ -64,7 +65,7 @@ public class UserController {
         if(logout != null) {
             model.addAttribute("logoutMessage", "Logout Successful!");
         }
-        return "loginPage.jsp";
+        return "user/loginPage.jsp";
     }
     
     @RequestMapping("/admin")
@@ -75,18 +76,61 @@ public class UserController {
         // decrypt first and last name of the user
         userService.decryptUser(user);
         model.addAttribute("currentUser", user);
-        return "adminPage.jsp";
+        return "home/adminPage.jsp";
     }
     
     @RequestMapping(value = {"/", "/home"})
-    public String home(Principal principal, Model model) {
+    public String home(Principal principal, Model model, HttpSession session) {
         String email = principal.getName();
         User user = userService.findByEmail(email);
         
         // First and Last name of the User is being decrypted so we can display it in the home page
         userService.decryptUser(user);
         model.addAttribute("currentUser", user);
-        return "homePage.jsp";
+        session.setAttribute("loggedUser", user);
+        return "home/homePage.jsp";
+    }
+    
+    // ACCOUNT URLS
+    
+    @RequestMapping("/account")
+    public String account(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("loggedUser");
+        model.addAttribute("user", user);
+        
+        // get user account
+//        List<CashAcct> userAccounts = user.getCashAccts();
+//        model.addAttribute("userAccounts", userAccounts);
+    	
+        return "account/account.jsp";
+    }
+    
+    @RequestMapping("/account/chn-name")
+    public String changeUserName(Model model, HttpSession session) {
+    	// create empty user instance for the form
+    	User user = new User();
+    	// put the empty user instance in the form
+    	model.addAttribute("user", user);
+    	return "account/changeName.jsp";
+    }
+    
+    @RequestMapping(value="/account/chn-name", method=RequestMethod.PUT)
+    public String changeUserName(@Valid @ModelAttribute("user") User user, BindingResult result, 
+    		Model model,
+    		HttpSession session) {
+    	// rename the form user instance
+    	User newUser = user;
+    	// gets the current logged user so we can pass it to the service
+    	// and update the user info
+    	User loggedUser = (User) session.getAttribute("loggedUser");
+    	
+    	if (result.hasErrors()) {
+    		return "account/changeName.jsp";
+    	} else  {
+    		userService.encryptAndSaveUser(newUser, loggedUser);
+    		return "redirect:/home";
+    	}
+    	
     }
 	
 }
