@@ -1,6 +1,7 @@
 package com.armando.myBudget.controllers;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -8,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,8 +97,8 @@ public class UserController {
     
     @RequestMapping("/account")
     public String account(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("loggedUser");
-        model.addAttribute("user", user);
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        model.addAttribute("user", loggedUser);
         
         // get user account
 //        List<CashAcct> userAccounts = user.getCashAccts();
@@ -107,6 +109,11 @@ public class UserController {
     
     @RequestMapping("/account/chn-name")
     public String changeUserName(Model model, HttpSession session) {
+    	// grabs the errors from session if the exist
+    	if (session.getAttribute("userNameErrors") != null) {
+    		model.addAttribute("userNameErrors", session.getAttribute("userNameErrors"));
+    	}
+    	
     	// create empty user instance for the form
     	User user = new User();
     	// put the empty user instance in the form
@@ -118,6 +125,9 @@ public class UserController {
     public String changeUserName(@Valid @ModelAttribute("user") User user, BindingResult result, 
     		Model model,
     		HttpSession session) {
+//		 clear the errors from session
+		session.removeAttribute("userNameErrors");
+    	
     	// rename the form user instance
     	User newUser = user;
     	// gets the current logged user so we can pass it to the service
@@ -125,12 +135,25 @@ public class UserController {
     	User loggedUser = (User) session.getAttribute("loggedUser");
     	
     	if (result.hasErrors()) {
-    		return "account/changeName.jsp";
+    		System.out.println("Errors found while editing User name");
+    		// gets all errors and save them into session so we can pass it into the template
+    		List<FieldError> errors = result.getFieldErrors();
+    		session.setAttribute("userNameErrors", errors);
+  
+    		return "redirect:/account/chn-name";
     	} else  {
     		userService.encryptAndSaveUser(newUser, loggedUser);
     		return "redirect:/home";
     	}
-    	
+    }
+    
+    @RequestMapping("/account/chn-email")
+    public String changeUserEmail(Model model, HttpSession session) {
+    	// create empty user instance for the form
+    	User user = new User();
+    	// put the empty user instance in the form
+    	model.addAttribute("user", user);
+    	return "account/changeEmail.jsp";
     }
 	
 }
