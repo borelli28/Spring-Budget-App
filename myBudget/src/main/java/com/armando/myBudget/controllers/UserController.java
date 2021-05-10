@@ -72,6 +72,7 @@ public class UserController {
     
     @RequestMapping("/admin")
     public String adminPage(Principal principal, Model model) {
+    	
         String email = principal.getName();
         User user = userService.findByEmail(email);
         
@@ -83,6 +84,7 @@ public class UserController {
     
     @RequestMapping(value = {"/", "/home"})
     public String home(Principal principal, Model model, HttpSession session) {
+
         String email = principal.getName();
         User user = userService.findByEmail(email);
         
@@ -91,6 +93,7 @@ public class UserController {
         model.addAttribute("currentUser", user);
         session.setAttribute("loggedUser", user);
         return "home/homePage.jsp";
+   
     }
     
     // ACCOUNT URLS
@@ -99,11 +102,7 @@ public class UserController {
     public String account(Model model, HttpSession session) {
         User loggedUser = (User) session.getAttribute("loggedUser");
         model.addAttribute("user", loggedUser);
-        
-        // get user account
-//        List<CashAcct> userAccounts = user.getCashAccts();
-//        model.addAttribute("userAccounts", userAccounts);
-    	
+           
         return "account/account.jsp";
     }
     
@@ -135,25 +134,65 @@ public class UserController {
     	User loggedUser = (User) session.getAttribute("loggedUser");
     	
     	if (result.hasErrors()) {
-    		System.out.println("Errors found while editing User name");
     		// gets all errors and save them into session so we can pass it into the template
     		List<FieldError> errors = result.getFieldErrors();
     		session.setAttribute("userNameErrors", errors);
   
     		return "redirect:/account/chn-name";
     	} else  {
-    		userService.encryptAndSaveUser(newUser, loggedUser);
+    		// we pass the newUser instance(with the first and last name that we updated
+    		// and we pass the encrypted user instance
+    		userService.updateUserName(newUser, userService.findByEmail(loggedUser.getEmail()));
     		return "redirect:/home";
     	}
     }
     
     @RequestMapping("/account/chn-email")
     public String changeUserEmail(Model model, HttpSession session) {
+    	// grabs the errors from session if the exist
+    	if (session.getAttribute("userEmailErrors") != null) {
+    		model.addAttribute("userEmailErrors", session.getAttribute("userEmailErrors"));
+    	}
+    	
     	// create empty user instance for the form
     	User user = new User();
     	// put the empty user instance in the form
     	model.addAttribute("user", user);
     	return "account/changeEmail.jsp";
+    }
+    
+    @RequestMapping(value="/account/chn-email", method=RequestMethod.PUT)
+    public String changeUserEmail(@Valid @ModelAttribute("user") User user, BindingResult result, 
+    		Model model,
+    		HttpSession session,
+    		Principal principal) {
+		// clear the errors from session
+		session.removeAttribute("userEmailErrors");
+    	
+    	// rename the form user instance
+    	User newUser = user;
+    	// gets the current logged user so we can pass it to the service
+    	// and update the user info
+    	User loggedUser = (User) session.getAttribute("loggedUser");
+    	
+    	if (result.hasErrors()) {
+    		System.out.println("Errors found while editing User email");
+    		// gets all errors and save them into session so we can pass it into the template
+    		List<FieldError> errors = result.getFieldErrors();
+    		session.setAttribute("userEmailErrors", errors);
+  
+    		return "redirect:/account/chn-email";
+    	} else  {
+    		// pass the new email that we want to save
+    		// and also pass the logged user instance that is encrypted
+    		// the one instance that we have in loggedUser was decrypted
+    		userService.updateUserEmail(newUser.getEmail(), userService.findByEmail(loggedUser.getEmail()));
+    		
+    		// user will be log out after updating email
+    		// the reason is that home use principal.getName() to get the current logged user email
+    		// and there is no way of updating the principal name that I know of
+    		return "redirect:/login";
+    	}
     }
 	
 }

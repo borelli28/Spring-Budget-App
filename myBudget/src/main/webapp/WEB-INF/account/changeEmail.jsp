@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,6 +11,11 @@
 </head>
 <body>
     <h1>Change Email</h1>
+    <div id="form-errors" style="color: red">
+    	<c:forEach items="${userEmailErrors}" var="error">
+    		<p><c:out value="${error.getDefaultMessage()}"></c:out></p>
+    	</c:forEach>
+    </div>
     <form:form method="post" action="/account/chn-email" modelAttribute="user">
     	<input value="put" name="_method" type="hidden" />
         <p>

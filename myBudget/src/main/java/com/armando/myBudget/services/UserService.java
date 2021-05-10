@@ -68,11 +68,10 @@ public class UserService {
         userRepo.save(user);
     }
     
-    public void encryptAndSaveUser(User newUser, User user) {
+    public void updateUserName(User newUser, User user) {
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
-    	
-    	
+        
 		// if user enter a first name then first name will be updated
 		if (newUser.getFirstName() != null) {
 			String firstNamePlainText = newUser.getFirstName();
@@ -84,6 +83,17 @@ public class UserService {
 			String lastNamePlainText = newUser.getLastName();
 			String encryptedLastName = aes256TextEncryptor.encrypt(lastNamePlainText);
 			user.setLastName(encryptedLastName);
+    	}
+    	
+    	userRepo.save(user);
+    	System.out.println("User updated!");
+    }
+    
+    public void updateUserEmail(String email, User user) {
+    	 
+		// if user enter an email then user email will be updated
+    	if (email != null) {
+			user.setEmail(email);
     	}
     	
     	userRepo.save(user);
