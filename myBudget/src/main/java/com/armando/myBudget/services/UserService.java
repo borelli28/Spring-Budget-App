@@ -100,6 +100,19 @@ public class UserService {
     	System.out.println("User updated!");
     }
     
+    public void updateUserPassword(String password, User user) {
+   	 
+		// if user enter a password then the password field will be updated
+    	if (password != null) {
+			user.setPassword(password);
+			// hash the password with bcrypt
+			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    	}
+    	
+    	userRepo.save(user);
+    	System.out.println("User updated!");
+    }
+    
     // Finds a user by their email
     public User findByEmail(String email) {
         return userRepo.findByEmail(email);

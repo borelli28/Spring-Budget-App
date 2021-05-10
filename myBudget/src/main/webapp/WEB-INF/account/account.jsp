@@ -10,8 +10,9 @@
 </head>
 <body>
 
-	<header>
+	<header style="display: flex; justify-content: space-around">
 		<h1>Hello, <c:out value="${user.firstName}"></c:out></h1>
+		<a href="/home">Go Home</a>
 	</header>
 	<main>
 	

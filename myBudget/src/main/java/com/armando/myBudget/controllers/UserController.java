@@ -194,5 +194,49 @@ public class UserController {
     		return "redirect:/login";
     	}
     }
-	
+    
+    @RequestMapping("/account/chn-password")
+    public String changeUserPassword(Model model, HttpSession session) {
+    	// grabs the errors from session if the exist
+    	if (session.getAttribute("userPasswordErrors") != null) {
+    		model.addAttribute("userPasswordErrors", session.getAttribute("userPasswordErrors"));
+    	}
+    	
+    	// create empty user instance for the form
+    	User user = new User();
+    	// put the empty user instance in the form
+    	model.addAttribute("user", user);
+    	return "account/changePassword.jsp";
+    }
+    
+    @RequestMapping(value="/account/chn-password", method=RequestMethod.PUT)
+    public String changeUserPassword(@Valid @ModelAttribute("user") User user, BindingResult result, 
+    		Model model,
+    		HttpSession session,
+    		Principal principal) {
+		// clear the errors from session
+		session.removeAttribute("userPasswordErrors");
+    	
+    	// rename the form user instance
+    	User newUser = user;
+    	// gets the current logged user so we can pass it to the service
+    	// and update the user info
+    	User loggedUser = (User) session.getAttribute("loggedUser");
+    	
+    	if (result.hasErrors()) {
+    		System.out.println("Errors found while editing User Password");
+    		// gets all errors and save them into session so we can pass it into the template
+    		List<FieldError> errors = result.getFieldErrors();
+    		session.setAttribute("userPasswordErrors", errors);
+  
+    		return "redirect:/account/chn-password";
+    	} else  {
+    		// pass the new password that we want to save
+    		// and also pass the logged user instance that is encrypted
+    		// the one instance that we have in loggedUser was decrypted
+    		userService.updateUserPassword(newUser.getPassword(), userService.findByEmail(loggedUser.getEmail()));
+    		
+    		return "redirect:/home";
+    	}
+    }
 }
