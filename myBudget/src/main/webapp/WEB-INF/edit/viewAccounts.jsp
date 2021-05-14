@@ -20,11 +20,21 @@
    			<tr>
    				<th>Name of Account</th>
    				<th>Balance</th>
+   				<th>Actions</th>
    			</tr>
    			<c:forEach items="${accounts}" var="account">
 	   			<tr>
 	   				<td>${account.title}</td>
 	   				<td>${account.amount}</td>
+	   				<td>
+	   					<a href="/edit/cashAcct/${account.id}">Edit</a>
+	    
+						<form action="/delete/cashAcct/${account.id}" method="post">
+							<input type="hidden" value="delete" name="_method" /> 
+							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+							<button type="submit" class="btn btn-danger">Delete</button>
+						</form>
+	   				</td>
 	   			</tr>
    			</c:forEach>
    		</table>
@@ -48,7 +58,7 @@
 	        </p>
 	        <button type="submit">Create</button>
 	    </form:form>
-  		</div>
+  	</div>
 	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
 </body>

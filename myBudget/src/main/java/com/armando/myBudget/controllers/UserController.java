@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -281,6 +282,15 @@ public class UserController {
     		System.out.println("new cash account saved");
     		return "redirect:/cash-account-view";
     	}
+    }
+    
+    // handles the delete data to delete the cash account
+    @RequestMapping(value="/delete/cashAcct/{accountId}", method=RequestMethod.DELETE)
+    public String deleteCashAcct(@PathVariable("accountId") Long accountId, Model model, HttpSession session) {
+		System.out.println("Inside deleteCashAcct()");
+    	cashAcctService.deleteCashAcct(accountId);
+    	System.out.println("Cash Account deleted");
+    	return "redirect:/home";
     }
     
 }

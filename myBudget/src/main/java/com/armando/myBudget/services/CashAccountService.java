@@ -19,4 +19,9 @@ public class CashAccountService {
 		cashAcctRepo.save(cashaccount);
 	}
 	
+    // delete a cash account
+    public void deleteCashAcct(Long id) {
+    	cashAcctRepo.deleteById(id);
+    }
+	
 }
