@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
@@ -239,4 +241,21 @@ public class UserController {
     		return "redirect:/home";
     	}
     }
+    
+    @Transactional
+    @RequestMapping("/cash-account-view")
+    public String cashAccount(Model model, HttpSession session) {
+    	
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        model.addAttribute("user", loggedUser);
+
+        // get all the accounts the user owns
+        List<CashAcct> accounts = loggedUser.getCashAccts();
+        model.addAttribute("accounts", accounts);
+        
+        return "/edit/viewAccounts.jsp";
+    	
+    }
+    
+    
 }
