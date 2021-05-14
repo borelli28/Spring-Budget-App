@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.User;
+import com.armando.myBudget.services.CashAccountService;
 import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
 
@@ -27,12 +27,13 @@ import com.armando.myBudget.validator.UserValidator;
 public class UserController {
 	
     private UserService userService;
-    
+    private CashAccountService cashAcctService;
     private UserValidator userValidator;
     
-    public UserController(UserService userService, UserValidator userValidator) {
+    public UserController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService) {
         this.userService = userService;
         this.userValidator = userValidator;
+        this.cashAcctService = cashAcctService;
     }
 
     @RequestMapping("/registration")
@@ -242,7 +243,7 @@ public class UserController {
     	}
     }
     
-    @Transactional
+    // renders view account page( with the add new account form)
     @RequestMapping("/cash-account-view")
     public String cashAccount(Model model, HttpSession session) {
     	
@@ -253,9 +254,33 @@ public class UserController {
         List<CashAcct> accounts = loggedUser.getCashAccts();
         model.addAttribute("accounts", accounts);
         
+        // for the new account form
+        CashAcct cashacct = new CashAcct();
+        model.addAttribute("cashacct", cashacct);
+        
         return "/edit/viewAccounts.jsp";
-    	
     }
     
+    // handles the post data from add new cash account form
+    @RequestMapping(value="/new/cashAcct", method=RequestMethod.POST)
+    public String createCashAcct(@Valid @ModelAttribute("cashacct") CashAcct cashacct, BindingResult result, 
+    		Model model,
+    		HttpSession session) {
+    	
+		System.out.println("Inside createCashAcct()");
+		
+    	if (result.hasErrors()) {
+    		System.out.println("Errors found while creating new cash account");
+  
+    		return "edit/viewAccounts.jsp";
+    	} else  {
+    		System.out.println("cash account details:");
+    		System.out.println(cashacct.getTitle());
+    		System.out.println(cashacct.getAmount());
+    		cashAcctService.createSaveAcct(cashacct);
+    		System.out.println("new cash account saved");
+    		return "redirect:/cash-account-view";
+    	}
+    }
     
 }

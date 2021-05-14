@@ -14,7 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.Digits;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,7 +31,8 @@ public class CashAcct {
     @Size(min=2, max=30, message="Please enter a title 2 - 30 characters long")
     private String title;
     
-    @Digits(integer=4, fraction=2, message="Please enter a valid amount(12.50)")
+    @NotNull(message="Please enter a value for Amount")
+    @DecimalMin(value="0.00", message="Please enter a valid amount(Ex: 1.50")
     private BigDecimal amount;
 	
     @Column(updatable=false)
