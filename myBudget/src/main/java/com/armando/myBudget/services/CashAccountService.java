@@ -1,8 +1,11 @@
 package com.armando.myBudget.services;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jasypt.util.numeric.AES256DecimalNumberEncryptor;
+import org.jasypt.util.numeric.BasicIntegerNumberEncryptor;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +29,13 @@ public class CashAccountService {
 		// encrypt title and amount of cash account before saving to the DB
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
-        // need a different algorithm to encrypt numbers
-        AES256DecimalNumberEncryptor aes256DecimalEncryptor = new AES256DecimalNumberEncryptor();
-        aes256DecimalEncryptor.setPassword(myKeys.getMelchor());
 		
-        String titlePlainText = cashaccount.getTitle();
-        BigDecimal amountPlainText = cashaccount.getAmount();
+        String titlePlainText = cashaccount.getTitle();        
+        String amountPlainText = cashaccount.getAmount();
         
     	String encryptedTitle = aes256TextEncryptor.encrypt(titlePlainText);
-    	BigDecimal encryptedAmount = aes256DecimalEncryptor.encrypt(amountPlainText);
-
+    	String encryptedAmount = aes256TextEncryptor.encrypt(amountPlainText);
+    	
     	System.out.println("Encryted attributes:");
     	System.out.println(encryptedTitle);
     	System.out.println(encryptedAmount);
@@ -44,6 +44,37 @@ public class CashAccountService {
     	cashaccount.setAmount(encryptedAmount);
         
 		cashAcctRepo.save(cashaccount);
+	}
+	
+	// decrypt cash account info
+	public List<CashAcct> decryptCashAccts(List<CashAcct> cashaccounts) {
+		System.out.println("Inside decryptCashAccts() in cash account service");
+		// instanciate and pass password to the encryptors that were using
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(myKeys.getMelchor());
+		
+        List<CashAcct> decryptedCashAccounts = new ArrayList<CashAcct>();
+        
+		// iterate trough each Cash Account and decrypt the attributes in there
+		for (int i=0; i < cashaccounts.size(); i++) {
+			System.out.println("Inside for loop");
+			CashAcct account = cashaccounts.get(i);
+			System.out.println("Cash Account:");
+			System.out.println(account.getTitle());
+			
+			String decryptedTitle = aes256TextEncryptor.decrypt(account.getTitle());
+			String decryptedAmount = aes256TextEncryptor.decrypt(account.getAmount());
+			
+			// create a copy of the account because we dont want to decrypt the OG account in the DB
+			CashAcct decryptedAccount = account;
+			decryptedAccount.setTitle(decryptedTitle);
+			decryptedAccount.setAmount(decryptedAmount);
+			
+			// add the decrypted account to the list of the decrypted accounts
+			decryptedCashAccounts.add(i, decryptedAccount);
+		}
+		System.out.println("Done decrypting all cash accounts info now return the list");
+		return decryptedCashAccounts;
 	}
 	
     // delete a cash account

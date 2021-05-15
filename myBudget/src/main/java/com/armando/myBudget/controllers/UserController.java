@@ -96,6 +96,15 @@ public class UserController {
         userService.decryptUser(user);
         model.addAttribute("currentUser", user);
         session.setAttribute("loggedUser", user);
+        
+        // decrypt Cash accounts data and save it in session
+        List<CashAcct> userCashAccts = user.getCashAccts();
+        cashAcctService.decryptCashAccts(userCashAccts);
+        session.setAttribute("userCashAccts", userCashAccts);
+        
+        
+        session.setAttribute("userCashAccts", userCashAccts);
+        
         return "home/homePage.jsp";
    
     }
@@ -271,14 +280,14 @@ public class UserController {
 		System.out.println("Inside createCashAcct()");
 		
 		String title = cashacct.getTitle();
-		Number amount = cashacct.getAmount();
+		String amount = cashacct.getAmount();
 		
     	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new cash account");
   
     		return "edit/viewAccounts.jsp";
     	}
-//    	Regex moneyR = new Regex("\\d+\\.\\d{2}");
+    	
 		// Check that inputs are valid( Title - a string with at least 2 character not null,
 		// Amount - a number with this pattern 0.00 at minimum and not null
     	if (title.length() > 1 && title != null) {
