@@ -57,7 +57,7 @@
 	    				<th>Balance</th>
 	    			</tr>
 	    			<tr>
-	    				<td>$5000</td>
+	    				<td>${userBalance}</td>
 	    			</tr>
 	    		</table>
     		</div>

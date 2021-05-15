@@ -6,8 +6,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Login Page</title>
 </head>
-<body>
-    <h1>Login</h1>
+<body style="display: flex; justify-content: center; flex-wrap: wrap; text-align: center">
+    <h1 style="width: 100%">Login</h1>
     <form method="POST" action="/login">
         <p>
             <label for="email">Email</label>

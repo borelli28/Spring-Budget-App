@@ -102,8 +102,18 @@ public class UserController {
         cashAcctService.decryptCashAccts(userCashAccts);
         session.setAttribute("userCashAccts", userCashAccts);
         
-        
         session.setAttribute("userCashAccts", userCashAccts);
+        
+        // get the user balance by adding all accounts amounts
+        Double userBalance = 0.00;
+        for (int i=0; i < userCashAccts.size(); i++) {
+        	// get the amount and added to the userBalance
+        	CashAcct account = userCashAccts.get(i);
+        	// convert string amount into a number
+        	Double amount = Double.parseDouble(account.getAmount());
+        	userBalance += amount;
+        }
+        model.addAttribute("userBalance", userBalance);
         
         return "home/homePage.jsp";
    

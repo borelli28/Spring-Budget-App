@@ -22,11 +22,18 @@
    				<th>Balance</th>
    				<th>Actions</th>
    			</tr>
+			<c:if test="${accounts.isEmpty()}">
+				<tr>
+					<td>Account Name</td>
+					<td>$0</td>
+					<td></td>
+				</tr>
+			</c:if>
    			<c:forEach items="${accounts}" var="account">
 	   			<tr>
 	   				<td>${account.title}</td>
 	   				<td>${account.amount}</td>
-	   				<td>
+	   				<td style="display: flex; justify-content: space-between">
 	   					<a href="/edit/cashAcct/${account.id}">Edit</a>
 	    
 						<form action="/delete/cashAcct/${account.id}" method="post">
