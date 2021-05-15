@@ -270,17 +270,54 @@ public class UserController {
     	
 		System.out.println("Inside createCashAcct()");
 		
-    	if (result.hasErrors()) {
+		String title = cashacct.getTitle();
+		Number amount = cashacct.getAmount();
+		
+    	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new cash account");
   
     		return "edit/viewAccounts.jsp";
-    	} else  {
-    		System.out.println("cash account details:");
-    		System.out.println(cashacct.getTitle());
-    		System.out.println(cashacct.getAmount());
-    		cashAcctService.createSaveAcct(cashacct);
-    		System.out.println("new cash account saved");
-    		return "redirect:/cash-account-view";
+    	}
+//    	Regex moneyR = new Regex("\\d+\\.\\d{2}");
+		// Check that inputs are valid( Title - a string with at least 2 character not null,
+		// Amount - a number with this pattern 0.00 at minimum and not null
+    	if (title.length() > 1 && title != null) {
+    		System.out.println("title pass controller validations");
+    		
+        	if (amount != null) {
+        		// convert amount to string to we can validate that amount has two decimal points
+        		String amountStr = String.valueOf(amount);
+        		//assert that the string is valid number
+        		int i = amountStr.lastIndexOf('.');
+        		if(i != -1 && amountStr.substring(i + 1).length() == 2) {
+        		    System.out.println("The number " + amountStr + " has two digits after dot");
+        		    
+        		    // send the values to the service to get encrypted and save to the DB
+            		System.out.println("cash account details:");
+            		System.out.println(cashacct.getTitle());
+            		System.out.println(cashacct.getAmount());
+            		cashAcctService.createSaveAcct(cashacct);
+            		System.out.println("new cash account saved");
+            		return "redirect:/home"; 
+        		} else {
+        			// amount failed 2 decimal places validations
+        			System.out.println("Amount do not have 2 decimal places");
+            		FieldError error = new FieldError("amount", "amount", "Please add two decimal points to the number(Example: 12.00)");
+            		result.addError(error);
+            		return "edit/viewAccounts.jsp";
+        		}
+        	} else {
+        		// amount fail null validation redirect to the page with the error
+        		System.out.println("amount fail null");
+        		FieldError error = new FieldError("amount", "amount", "Please enter an amount");
+        		result.addError(error);
+        		return "edit/viewAccounts.jsp";
+        	}
+        	// input did not pass validations so we are redirecting back to the page with the errors
+    	} else {
+    		FieldError error = new FieldError("title", "title", "Please enter a Title");
+    		result.addError(error);
+    		return "edit/viewAccounts.jsp";
     	}
     }
     

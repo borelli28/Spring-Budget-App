@@ -28,11 +28,10 @@ public class CashAcct {
     private Long id;
     
     @NotNull
-    @Size(min=2, max=30, message="Please enter a title 2 - 30 characters long")
+    @Size(min=2, message="Please enter a title at least 2 characters long")
     private String title;
     
     @NotNull(message="Please enter a value for Amount")
-    @DecimalMin(value="0.00", message="Please enter a valid amount(Ex: 1.50")
     private BigDecimal amount;
 	
     @Column(updatable=false)

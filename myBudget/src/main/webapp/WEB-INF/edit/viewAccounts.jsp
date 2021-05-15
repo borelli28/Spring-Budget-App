@@ -54,7 +54,7 @@
 	        </p>
 	        <p>
 	            <form:label path="amount">Amount: $</form:label>
-	            <form:input path="amount"/>
+	            <form:input type="number" step="0.01" path="amount"/>
 	        </p>
 	        <button type="submit">Create</button>
 	    </form:form>
