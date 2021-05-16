@@ -1,7 +1,6 @@
 package com.armando.myBudget.controllers;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.armando.myBudget.models.CashAcct;
+import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
 import com.armando.myBudget.services.CashAccountService;
@@ -28,20 +28,25 @@ import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
 
 @Controller
-public class UserController {
+public class MainController {
 	
     private UserService userService;
     private CashAccountService cashAcctService;
     private UserValidator userValidator;
     private CashAcctRepo cashAcctRepo;
     
-    public UserController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, CashAcctRepo cashAcctRepo) {
+    public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, CashAcctRepo cashAcctRepo) {
         this.userService = userService;
         this.userValidator = userValidator;
         this.cashAcctService = cashAcctService;
         this.cashAcctRepo = cashAcctRepo;
     }
-
+    
+    //
+    // BASIC METHODS
+    //
+    
+    // Registration and Login Methods
     @RequestMapping("/registration")
     public String registerForm(@Valid @ModelAttribute("user") User user) {
         return "user/registrationPage.jsp";
@@ -79,6 +84,7 @@ public class UserController {
         return "user/loginPage.jsp";
     }
     
+    // Home/Admin Methods
     @RequestMapping("/admin")
     public String adminPage(Principal principal, Model model) {
     	
@@ -94,6 +100,9 @@ public class UserController {
     @RequestMapping(value = {"/", "/home"})
     public String home(Principal principal, Model model, HttpSession session) {
 
+    	// testing other controller delete this later
+    	session.setAttribute("test", "This text comes from Main Controller!");
+    	
         String email = principal.getName();
         User user = userService.findByEmail(email);
         
@@ -132,7 +141,9 @@ public class UserController {
    
     }
     
-    // ACCOUNT URLS
+    //
+    // USER ACCOUNT METHODS
+    //
     
     @RequestMapping("/account")
     public String account(Model model, HttpSession session) {
@@ -276,6 +287,11 @@ public class UserController {
     	}
     }
     
+    //
+    // MANAGE DROPDOWN METHODS
+    //
+    
+    // Cash Accounts Methods
     // renders view account page( with the add new account form)
     @RequestMapping("/cash-account-view")
     public String cashAccount(Model model, HttpSession session) {
@@ -291,7 +307,7 @@ public class UserController {
         CashAcct cashacct = new CashAcct();
         model.addAttribute("cashacct", cashacct);
         
-        return "/edit/viewCashAccounts.jsp";
+        return "/edit/cashAccount/viewCashAccounts.jsp";
     }
     
     // handles the post data from add new cash account form
@@ -305,7 +321,7 @@ public class UserController {
     	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new cash account");
   
-    		return "/edit/viewCashAccounts.jsp";
+    		return "/edit/cashAccount/viewCashAccounts.jsp";
     	}
     	
     	//  send the cash account to validate in the service
@@ -316,7 +332,7 @@ public class UserController {
     		return "redirect:/home";
     	} else {
     		model.addAttribute("errors", validationErrors);
-    		return "/edit/viewCashAccounts.jsp";
+    		return "/edit/cashAccount/viewCashAccounts.jsp";
     	}
     }
     
@@ -343,7 +359,7 @@ public class UserController {
     	User user = (User) session.getAttribute("loggedUser");
     	model.addAttribute("user", user);
     	
-    	return "/edit/editCashAccount.jsp";
+    	return "/edit/cashAccount/editCashAccount.jsp";
     }
     
     // handles put form to edit cash account
@@ -366,7 +382,7 @@ public class UserController {
     			System.out.println(validationErrors.get(i));
     		}
     		session.setAttribute("cashAcctPutErrors", validationErrors);
-    		return "redirect:/edit/cashAcct/" + accountId;
+    		return "redirect:/edit/cashAccount/cashAcct/" + accountId;
     	}
     	
     }
@@ -378,6 +394,25 @@ public class UserController {
     	cashAcctService.deleteCashAcct(accountId);
     	System.out.println("Cash Account deleted");
     	return "redirect:/home";
+    }
+    
+    // Expenses Methods
+    // renders view my expenses page
+    @RequestMapping("/expenses")
+    public String expenses(HttpSession session, Model model) {
+    	
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        model.addAttribute("user", loggedUser);
+
+        // get all the expenses of the user
+        List<Expense> expenses = loggedUser.getExpenses();
+        model.addAttribute("expenses", expenses);
+        
+        // for the new expense form
+        Expense expense = new Expense();
+        model.addAttribute("expense", expense);
+    	
+    	return "manage/expenses/viewExpenses.jsp";
     }
     
 }

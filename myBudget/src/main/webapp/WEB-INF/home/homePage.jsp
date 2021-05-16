@@ -19,12 +19,12 @@
 	    		<a class="navbar-brand" href="/home">Dashboard</a>
 	    		<div class="dropdown">
 				  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-				  	Edit
+				  	Manage
 				  </a>
 				
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 				    <li><a class="dropdown-item" href="/cash-account-view">Cash Accounts</a></li>
-				    <li><a class="dropdown-item" href="#">Expenses</a></li>
+				    <li><a class="dropdown-item" href="/expenses">Expenses</a></li>
 				    <li><a class="dropdown-item" href="#">Investments</a></li>
 				  </ul>
 				</div>
