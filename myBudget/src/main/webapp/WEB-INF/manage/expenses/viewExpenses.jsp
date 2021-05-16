@@ -25,7 +25,7 @@
 			<c:if test="${expenses.isEmpty()}">
 				<tr>
 					<td>Example</td>
-					<td>$100</td>
+					<td>$100.00</td>
 					<td></td>
 				</tr>
 			</c:if>

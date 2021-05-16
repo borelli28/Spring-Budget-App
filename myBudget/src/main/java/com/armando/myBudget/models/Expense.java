@@ -30,7 +30,7 @@ public class Expense {
     private String title;
     
     @NotNull(message="Please enter an amount")
-    private Double amount;
+    private String amount;
     
     // many to one rel with user
     @ManyToOne(fetch=FetchType.LAZY)
@@ -48,7 +48,7 @@ public class Expense {
     public Expense() {
     }
     
-    public Expense(String title, Double amount) {
+    public Expense(String title, String amount) {
     	this.title = title;
     	this.amount = amount;
     }
@@ -71,11 +71,11 @@ public class Expense {
 		this.title = title;
 	}
 
-	public Double getAmount() {
+	public String getAmount() {
 		return amount;
 	}
 
-	public void setAmount(Double amount) {
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
 

@@ -24,6 +24,7 @@ import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
 import com.armando.myBudget.services.CashAccountService;
+import com.armando.myBudget.services.ExpenseService;
 import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
 
@@ -34,17 +35,21 @@ public class MainController {
     private CashAccountService cashAcctService;
     private UserValidator userValidator;
     private CashAcctRepo cashAcctRepo;
+    private ExpenseService expenseService;
     
-    public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, CashAcctRepo cashAcctRepo) {
+    public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, CashAcctRepo cashAcctRepo, ExpenseService expenseService) {
         this.userService = userService;
         this.userValidator = userValidator;
         this.cashAcctService = cashAcctService;
         this.cashAcctRepo = cashAcctRepo;
+        this.expenseService = expenseService;
     }
+    
     
     //
     // BASIC METHODS
     //
+    
     
     // Registration and Login Methods
     @RequestMapping("/registration")
@@ -287,9 +292,11 @@ public class MainController {
     	}
     }
     
+    
     //
     // MANAGE DROPDOWN METHODS
     //
+    
     
     // Cash Accounts Methods
     // renders view account page( with the add new account form)
@@ -405,7 +412,10 @@ public class MainController {
         model.addAttribute("user", loggedUser);
 
         // get all the expenses of the user
-        List<Expense> expenses = loggedUser.getExpenses();
+        List<Expense> expensesEncrypted = loggedUser.getExpenses();
+        
+        // decrypt expenses
+        List<Expense> expenses = expenseService.decryptExpenses(expensesEncrypted);
         model.addAttribute("expenses", expenses);
         
         // for the new expense form
@@ -413,6 +423,32 @@ public class MainController {
         model.addAttribute("expense", expense);
     	
     	return "manage/expenses/viewExpenses.jsp";
+    }
+    
+    // handles the post data from add new expense form
+    @RequestMapping(value="/new/expense", method=RequestMethod.POST)
+    public String createExpense(@Valid @ModelAttribute("expense") Expense expense, BindingResult result, 
+    		Model model,
+    		HttpSession session) {
+    	
+		System.out.println("Inside createExpense()");
+
+    	if (result.hasErrors()) {	
+    		System.out.println("Errors found while creating new expense");
+  
+    		return "/manage/expenses/viewExpenses.jsp";
+    	}
+    	
+    	//  send the expense to validate in the service
+    	List<String> validationErrors =  expenseService.validateExpense(expense);
+    	//  if there's is no errors then create new object and redirect to home. Else save the errors in model and render back the page
+    	if (validationErrors.isEmpty()) {
+    		expenseService.createSaveExpense(expense);
+    		return "redirect:/home";
+    	} else {
+    		model.addAttribute("errors", validationErrors);
+    		return "/manage/expenses/viewExpenses.jsp";
+    	}
     }
     
 }
