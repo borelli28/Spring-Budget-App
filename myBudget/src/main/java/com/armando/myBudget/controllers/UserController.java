@@ -325,24 +325,23 @@ public class UserController {
     public String editCashAccountForm(@PathVariable("accountId") Long accountId, Model model, HttpSession session) {
     	
     	// get errors from put method
-    	List<ObjectError> errors = (List<ObjectError>) session.getAttribute("cashAcctErrors");
-    	model.addAttribute("errors", errors);
+    	model.addAttribute("errors", session.getAttribute("cashAcctPutErrors"));
     			
     	// get the account using the ID and then decrypt the account
     	Optional<CashAcct> cashacct = cashAcctRepo.findById(accountId);
     	CashAcct cashAccount = new CashAcct();
+    	
     	if (cashacct.isPresent()) {
     		cashAccount = cashacct.get();
     	} else {
     		return "redirect:/home";
     	}
+    	
     	CashAcct cashAcct = cashAcctService.decryptCashAcct(cashAccount);
     	model.addAttribute("cashAcct", cashAcct);
     	
     	User user = (User) session.getAttribute("loggedUser");
     	model.addAttribute("user", user);
-    	System.out.println("Cash Account id:");
-    	System.out.println(cashAcct.getId());
     	
     	return "/edit/editCashAccount.jsp";
     }
@@ -352,17 +351,22 @@ public class UserController {
     public String editCashAccount(@Valid @ModelAttribute("cashAcct") CashAcct cashAcct, BindingResult result, @PathVariable("accountId") Long accountId, Model model, HttpSession session) {
     	
     	System.out.println("Inside edit cash account put method");
-//    	//reset errors in session
-//    	session.removeAttribute("cashAcctErrors");
+    	//reset errors in session
+    	session.removeAttribute("cashAcctPutErrors");
     	
     	//  send the cash account to validate in the service
     	List<String> validationErrors =  cashAcctService.validateAccount(cashAcct);
     	//  if there's is no errors then redirect to home. Else save the errors in model and render back the page
     	if (validationErrors.isEmpty()) {
+    		cashAcctService.updateCashAcct(cashAcct, accountId);
     		return "redirect:/home";
     	} else {
-    		model.addAttribute("errors", validationErrors);
-    		return "/edit/editCashAccount.jsp";
+    		System.out.println("Errors found when validating Cash Account");
+    		for (int i=0; i < validationErrors.size(); i++) {
+    			System.out.println(validationErrors.get(i));
+    		}
+    		session.setAttribute("cashAcctPutErrors", validationErrors);
+    		return "redirect:/edit/cashAcct/" + accountId;
     	}
     	
     }

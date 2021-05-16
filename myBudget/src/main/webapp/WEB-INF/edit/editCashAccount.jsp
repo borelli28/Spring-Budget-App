@@ -14,7 +14,7 @@
 		<h2>Edit <c:out value="${cashAcct.title}"></c:out></h2>
 		
 	    <c:forEach items="${errors}" var="error">
-       		<p style="color: red"><c:out value="${error.getDefaultMessage()}"></c:out></p>
+       		<p style="color: red"><c:out value="${error}"></c:out></p>
        	</c:forEach>
 		
 	    <form:form method="post" action="/edit/cashAcct/${cashAcct.id}" modelAttribute="cashAcct">
@@ -24,12 +24,12 @@
 	    	<p>
 	            <form:label path="title">Title:</form:label>
 	            <form:errors path="title" />
-	            <form:input path="title"/>
+	            <form:input path="title" required="true"/>
 	        </p>
 	        <p>
 	            <form:label path="amount">Amount: $</form:label>
 	            <form:errors path="amount" />
-	            <form:input path="amount"/>
+	            <form:input path="amount" required="true"/>
 	        </p>
 	        <input type="submit" value="Edit" class="btn btn-primary"/>
 	    </form:form>
