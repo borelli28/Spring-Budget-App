@@ -417,6 +417,7 @@ public class MainController {
         // decrypt expenses
         List<Expense> expenses = expenseService.decryptExpenses(expensesEncrypted);
         model.addAttribute("expenses", expenses);
+        session.setAttribute("expenses", expenses);
         
         // for the new expense form
         Expense expense = new Expense();
@@ -432,12 +433,6 @@ public class MainController {
     		HttpSession session) {
     	
 		System.out.println("Inside createExpense()");
-
-    	if (result.hasErrors()) {	
-    		System.out.println("Errors found while creating new expense");
-  
-    		return "/manage/expenses/viewExpenses.jsp";
-    	}
     	
     	//  send the expense to validate in the service
     	List<String> validationErrors =  expenseService.validateExpense(expense);
@@ -446,8 +441,11 @@ public class MainController {
     		expenseService.createSaveExpense(expense);
     		return "redirect:/home";
     	} else {
+    		// view expenses page need decrypted list of expenses to display data
+    		model.addAttribute("expenses", session.getAttribute("expenses"));
+    		
     		model.addAttribute("errors", validationErrors);
-    		return "/manage/expenses/viewExpenses.jsp";
+    		return "manage/expenses/viewExpenses.jsp";
     	}
     }
     

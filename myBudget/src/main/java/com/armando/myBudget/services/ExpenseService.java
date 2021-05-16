@@ -83,11 +83,11 @@ public class ExpenseService {
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
 		
         List<Expense> decryptedexpenses = new ArrayList<Expense>();
-        
+
 		// iterate trough each expense and decrypt the attributes in there
 		for (int i=0; i < expenses.size(); i++) {
 			Expense exp = expenses.get(i);
-			
+
 			String decryptedTitle = aes256TextEncryptor.decrypt(exp.getTitle());
 			String decryptedAmount = aes256TextEncryptor.decrypt(exp.getAmount());
 			
