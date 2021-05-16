@@ -449,4 +449,13 @@ public class MainController {
     	}
     }
     
+    // handles the delete data to delete the expense
+    @RequestMapping(value="/delete/expenses/{expId}", method=RequestMethod.DELETE)
+    public String deleteExpense(@PathVariable("expId") Long expId, Model model, HttpSession session) {
+		System.out.println("Inside deleteExpense()");
+    	expenseService.deleteExpense(expId);
+    	System.out.println("Expense deleted");
+    	return "redirect:/home";
+    }
+    
 }

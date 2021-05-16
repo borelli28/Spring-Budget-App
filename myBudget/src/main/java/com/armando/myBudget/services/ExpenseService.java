@@ -120,4 +120,9 @@ public class ExpenseService {
 		return decryptedExpense;
 	}
 	
+    // delete an expense
+    public void deleteExpense(Long id) {
+    	expenseRepo.deleteById(id);
+    }
+	
 }
