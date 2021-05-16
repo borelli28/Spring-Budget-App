@@ -123,29 +123,29 @@ class MyBudgetApplicationTests {
 		assertFalse( violationsTwo.isEmpty(), "When passed an invalid date it did not trigger a validation errors");
 	}
 	
-	@Test
-	void testCashAcctModel() {
-		CashAcct cashAcct = new CashAcct();
-		
-		// Check for valid attributes
-		cashAcct.setTitle("a title");
-		cashAcct.setAmount(BigDecimal.valueOf(100.25));
-		Set<ConstraintViolation<CashAcct>> violations = validator.validate(cashAcct);
-		for (ConstraintViolation<CashAcct> violation : violations) {
-			System.out.println(violation.getMessage());
-		}
-		assertTrue(violations.isEmpty(), "When passed a valid attributes to CashAcct model it did throw validation errors");
-		
-		// check for invalid attributes
-		cashAcct.setTitle("q");
-		cashAcct.setAmount(BigDecimal.valueOf(100.25345));
-		Set<ConstraintViolation<CashAcct>> violationsTwo = validator.validate(cashAcct);
-//		for (ConstraintViolation<CashAcct> violation : violationsTwo) {
+//	@Test
+//	void testCashAcctModel() {
+//		CashAcct cashAcct = new CashAcct();
+//		
+//		// Check for valid attributes
+//		cashAcct.setTitle("a title");
+//		cashAcct.setAmount(BigDecimal.valueOf(100.25));
+//		Set<ConstraintViolation<CashAcct>> violations = validator.validate(cashAcct);
+//		for (ConstraintViolation<CashAcct> violation : violations) {
 //			System.out.println(violation.getMessage());
 //		}
-		assertFalse(violationsTwo.isEmpty(), "When passed invalid attributes to CashAcct model it did not throw any validation errors");
-		
-	}
+//		assertTrue(violations.isEmpty(), "When passed a valid attributes to CashAcct model it did throw validation errors");
+//		
+//		// check for invalid attributes
+//		cashAcct.setTitle("q");
+//		cashAcct.setAmount(BigDecimal.valueOf(100.25345));
+//		Set<ConstraintViolation<CashAcct>> violationsTwo = validator.validate(cashAcct);
+////		for (ConstraintViolation<CashAcct> violation : violationsTwo) {
+////			System.out.println(violation.getMessage());
+////		}
+//		assertFalse(violationsTwo.isEmpty(), "When passed invalid attributes to CashAcct model it did not throw any validation errors");
+//		
+//	}
 	
 	@Test
 	void testCashIncomeModel() {

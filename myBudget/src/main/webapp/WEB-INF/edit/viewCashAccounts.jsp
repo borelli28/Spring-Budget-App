@@ -35,7 +35,7 @@
 	   				<td>${account.amount}</td>
 	   				<td style="display: flex; justify-content: space-between">
 	   					<a href="/edit/cashAcct/${account.id}">Edit</a>
-	    
+	    				<p> | </p>
 						<form action="/delete/cashAcct/${account.id}" method="post">
 							<input type="hidden" value="delete" name="_method" /> 
 							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -52,6 +52,9 @@
 		<h4>Add a New Account</h4>
 		
 		<p style="color: red"><form:errors path="cashacct.*"/></p>
+	    <c:forEach items="${errors}" var="error">
+       		<p style="color: red"><c:out value="${error}"></c:out></p>
+       	</c:forEach>
    
 	    <form:form method="POST" action="/new/cashAcct" modelAttribute="cashacct">
 	    	<form:input path="user" type="hidden" value="${user.getId()}" />

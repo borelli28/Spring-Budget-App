@@ -1,7 +1,9 @@
 package com.armando.myBudget.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.User;
+import com.armando.myBudget.repositories.CashAcctRepo;
 import com.armando.myBudget.services.CashAccountService;
 import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
@@ -30,11 +33,13 @@ public class UserController {
     private UserService userService;
     private CashAccountService cashAcctService;
     private UserValidator userValidator;
+    private CashAcctRepo cashAcctRepo;
     
-    public UserController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService) {
+    public UserController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, CashAcctRepo cashAcctRepo) {
         this.userService = userService;
         this.userValidator = userValidator;
         this.cashAcctService = cashAcctService;
+        this.cashAcctRepo = cashAcctRepo;
     }
 
     @RequestMapping("/registration")
@@ -109,9 +114,17 @@ public class UserController {
         for (int i=0; i < userCashAccts.size(); i++) {
         	// get the amount and added to the userBalance
         	CashAcct account = userCashAccts.get(i);
-        	// convert string amount into a number
-        	Double amount = Double.parseDouble(account.getAmount());
-        	userBalance += amount;
+        	// check that account.getAmonut() is not empty before parsing else an error will appear
+        	if (!account.getAmount().isEmpty()) {
+            	// convert string amount into a number
+            	Double amount = Double.parseDouble(account.getAmount());
+            	userBalance += amount;
+        	} else {
+        		// amount is an empty string for some reason so
+        		// we are going to assign the value null to user Balance
+        		System.out.println("Cash Account amount is empty. Assigning null to User Balance");
+        		userBalance = null;
+        	}
         }
         model.addAttribute("userBalance", userBalance);
         
@@ -278,7 +291,7 @@ public class UserController {
         CashAcct cashacct = new CashAcct();
         model.addAttribute("cashacct", cashacct);
         
-        return "/edit/viewAccounts.jsp";
+        return "/edit/viewCashAccounts.jsp";
     }
     
     // handles the post data from add new cash account form
@@ -288,56 +301,70 @@ public class UserController {
     		HttpSession session) {
     	
 		System.out.println("Inside createCashAcct()");
-		
-		String title = cashacct.getTitle();
-		String amount = cashacct.getAmount();
-		
+
     	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new cash account");
   
-    		return "edit/viewAccounts.jsp";
+    		return "/edit/viewCashAccounts.jsp";
     	}
     	
-		// Check that inputs are valid( Title - a string with at least 2 character not null,
-		// Amount - a number with this pattern 0.00 at minimum and not null
-    	if (title.length() > 1 && title != null) {
-    		System.out.println("title pass controller validations");
-    		
-        	if (amount != null) {
-        		// convert amount to string to we can validate that amount has two decimal points
-        		String amountStr = String.valueOf(amount);
-        		//assert that the string is valid number
-        		int i = amountStr.lastIndexOf('.');
-        		if(i != -1 && amountStr.substring(i + 1).length() == 2) {
-        		    System.out.println("The number " + amountStr + " has two digits after dot");
-        		    
-        		    // send the values to the service to get encrypted and save to the DB
-            		System.out.println("cash account details:");
-            		System.out.println(cashacct.getTitle());
-            		System.out.println(cashacct.getAmount());
-            		cashAcctService.createSaveAcct(cashacct);
-            		System.out.println("new cash account saved");
-            		return "redirect:/home"; 
-        		} else {
-        			// amount failed 2 decimal places validations
-        			System.out.println("Amount do not have 2 decimal places");
-            		FieldError error = new FieldError("amount", "amount", "Please add two decimal points to the number(Example: 12.00)");
-            		result.addError(error);
-            		return "edit/viewAccounts.jsp";
-        		}
-        	} else {
-        		// amount fail null validation redirect to the page with the error
-        		System.out.println("amount fail null");
-        		FieldError error = new FieldError("amount", "amount", "Please enter an amount");
-        		result.addError(error);
-        		return "edit/viewAccounts.jsp";
-        	}
-        	// input did not pass validations so we are redirecting back to the page with the errors
+    	//  send the cash account to validate in the service
+    	List<String> validationErrors =  cashAcctService.validateAccount(cashacct);
+    	//  if there's is no errors then redirect to home. Else save the errors in model and render back the page
+    	if (validationErrors.isEmpty()) {
+    		cashAcctService.createSaveAcct(cashacct);
+    		return "redirect:/home";
     	} else {
-    		FieldError error = new FieldError("title", "title", "Please enter a Title");
-    		result.addError(error);
-    		return "edit/viewAccounts.jsp";
+    		model.addAttribute("errors", validationErrors);
+    		return "/edit/viewCashAccounts.jsp";
     	}
+    }
+    
+    // renders the edit cash account form
+    @RequestMapping("/edit/cashAcct/{accountId}")
+    public String editCashAccountForm(@PathVariable("accountId") Long accountId, Model model, HttpSession session) {
+    	
+    	// get errors from put method
+    	List<ObjectError> errors = (List<ObjectError>) session.getAttribute("cashAcctErrors");
+    	model.addAttribute("errors", errors);
+    			
+    	// get the account using the ID and then decrypt the account
+    	Optional<CashAcct> cashacct = cashAcctRepo.findById(accountId);
+    	CashAcct cashAccount = new CashAcct();
+    	if (cashacct.isPresent()) {
+    		cashAccount = cashacct.get();
+    	} else {
+    		return "redirect:/home";
+    	}
+    	CashAcct cashAcct = cashAcctService.decryptCashAcct(cashAccount);
+    	model.addAttribute("cashAcct", cashAcct);
+    	
+    	User user = (User) session.getAttribute("loggedUser");
+    	model.addAttribute("user", user);
+    	System.out.println("Cash Account id:");
+    	System.out.println(cashAcct.getId());
+    	
+    	return "/edit/editCashAccount.jsp";
+    }
+    
+    // handles put form to edit cash account
+    @RequestMapping(value="/edit/cashAcct/{accountId}", method=RequestMethod.PUT)
+    public String editCashAccount(@Valid @ModelAttribute("cashAcct") CashAcct cashAcct, BindingResult result, @PathVariable("accountId") Long accountId, Model model, HttpSession session) {
+    	
+    	System.out.println("Inside edit cash account put method");
+//    	//reset errors in session
+//    	session.removeAttribute("cashAcctErrors");
+    	
+    	//  send the cash account to validate in the service
+    	List<String> validationErrors =  cashAcctService.validateAccount(cashAcct);
+    	//  if there's is no errors then redirect to home. Else save the errors in model and render back the page
+    	if (validationErrors.isEmpty()) {
+    		return "redirect:/home";
+    	} else {
+    		model.addAttribute("errors", validationErrors);
+    		return "/edit/editCashAccount.jsp";
+    	}
+    	
     }
     
     // handles the delete data to delete the cash account
