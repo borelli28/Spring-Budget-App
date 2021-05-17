@@ -60,11 +60,11 @@
 	    	<form:input path="user" type="hidden" value="${user.getId()}" />
 	        <p>
 	            <form:label path="title">Title:</form:label>
-	            <form:input path="title"/>
+	            <form:input path="title" required="true"/>
 	        </p>
 	        <p>
 	            <form:label path="amount">Amount: $</form:label>
-	            <form:input type="number" step="0.01" path="amount"/>
+	            <form:input type="number" step="0.01" path="amount" required="true"/>
 	        </p>
 	        <button type="submit" class="btn btn-primary">Create</button>
 	    </form:form>

@@ -2,6 +2,7 @@ package com.armando.myBudget.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,32 @@ public class ExpenseService {
     	expense.setAmount(encryptedAmount);
         
 		expenseRepo.save(expense);
+	}
+	
+	public void updateExpense(Expense expense, Long expId) {
+		
+		System.out.println("Inside updateExpense()");
+		// get OG cash account instance that we are editing
+		Optional<Expense> ogExp = expenseRepo.findById(expId);
+		Expense editThisExpense = new Expense();
+		if (ogExp.isPresent()) {
+			editThisExpense = ogExp.get();
+		}
+		
+		// encrypt title and amount of cash account before saving to the DB
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(myKeys.getMelchor());
+		
+        String titlePlainText = expense.getTitle();        
+        String amountPlainText = expense.getAmount();
+        
+    	String encryptedTitle = aes256TextEncryptor.encrypt(titlePlainText);
+    	String encryptedAmount = aes256TextEncryptor.encrypt(amountPlainText);
+    	
+    	editThisExpense.setTitle(encryptedTitle);
+    	editThisExpense.setAmount(encryptedAmount);
+        
+		expenseRepo.save(editThisExpense);
 	}
 	
     // validate expenses attributes

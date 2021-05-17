@@ -23,6 +23,7 @@ import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
+import com.armando.myBudget.repositories.ExpenseRepo;
 import com.armando.myBudget.services.CashAccountService;
 import com.armando.myBudget.services.ExpenseService;
 import com.armando.myBudget.services.UserService;
@@ -36,13 +37,18 @@ public class MainController {
     private UserValidator userValidator;
     private CashAcctRepo cashAcctRepo;
     private ExpenseService expenseService;
+    private ExpenseRepo expenseRepo;
     
-    public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, CashAcctRepo cashAcctRepo, ExpenseService expenseService) {
+    public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, 
+    		CashAcctRepo cashAcctRepo, ExpenseService expenseService,
+    		ExpenseRepo expenseRepo) {
+    	
         this.userService = userService;
         this.userValidator = userValidator;
         this.cashAcctService = cashAcctService;
         this.cashAcctRepo = cashAcctRepo;
         this.expenseService = expenseService;
+        this.expenseRepo = expenseRepo;
     }
     
     
@@ -446,6 +452,57 @@ public class MainController {
     		
     		model.addAttribute("errors", validationErrors);
     		return "manage/expenses/viewExpenses.jsp";
+    	}
+    }
+    
+    // renders the edit form for expenses
+    @RequestMapping("/edit/expenses/{expId}")
+    public String editExpenseForm(@PathVariable("expId") Long expId, Model model, HttpSession session) {
+    	
+    	// get errors from put method
+    	model.addAttribute("errors", session.getAttribute("expensePutErrors"));
+    			
+    	// get the expense using the ID and then decrypt the account
+    	Optional<Expense> iexpense = expenseRepo.findById(expId);
+    	Expense expense = new Expense();
+    	
+    	// get the expense instance out of the Optional iexpense
+    	if (iexpense.isPresent()) {
+    		expense = iexpense.get();
+    	} else {
+    		return "redirect:/home";
+    	}
+    	
+    	Expense theExpense = expenseService.decryptExpense(expense);
+    	model.addAttribute("expense", theExpense);
+    	
+    	User user = (User) session.getAttribute("loggedUser");
+    	model.addAttribute("user", user);
+    	
+    	return "/manage/expenses/editExpense.jsp";
+    }
+    
+    // handles put form data to edit expense
+    @RequestMapping(value="/edit/expenses/{expId}", method=RequestMethod.PUT)
+    public String editCashAccount(@Valid @ModelAttribute("expense") Expense expense, BindingResult result, 
+    		@PathVariable("expId") Long expId, Model model, HttpSession session) {
+
+    	//reset errors in session
+    	session.removeAttribute("expensePutErrors");
+    	
+    	//  send the expense object to validate in the service
+    	List<String> validationErrors =  expenseService.validateExpense(expense);
+    	//  if there's is no errors then redirect to home. Else save the errors in model and render back the page
+    	if (validationErrors.isEmpty()) {
+    		expenseService.updateExpense(expense, expId);
+    		return "redirect:/home";
+    	} else {
+    		System.out.println("Errors found when validating Expense");
+    		for (int i=0; i < validationErrors.size(); i++) {
+    			System.out.println(validationErrors.get(i));
+    		}
+    		session.setAttribute("expensePutErrors", validationErrors);
+    		return "redirect:/edit/expenses/" + expId;
     	}
     }
     
