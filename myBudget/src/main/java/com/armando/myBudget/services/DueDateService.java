@@ -109,5 +109,9 @@ public class DueDateService {
 
 		return decryptedObject;
 	}
+	
+    public void deleteDuedate(Long id) {
+    	duedateRepo.deleteById(id);
+    }
     
 }

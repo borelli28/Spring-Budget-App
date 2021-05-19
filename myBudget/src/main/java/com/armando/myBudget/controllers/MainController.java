@@ -26,6 +26,7 @@ import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.Income;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
+import com.armando.myBudget.repositories.DueDateRepo;
 import com.armando.myBudget.repositories.ExpenseRepo;
 import com.armando.myBudget.repositories.IncomeRepo;
 import com.armando.myBudget.services.CashAccountService;
@@ -47,11 +48,13 @@ public class MainController {
     private DueDateService duedateService;
     private IncomeService incomeService;
     private IncomeRepo incomeRepo;
+    private DueDateRepo duedateRepo;
     
     public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, 
     		CashAcctRepo cashAcctRepo, ExpenseService expenseService,
     		ExpenseRepo expenseRepo, DueDateService duedateService,
-    		IncomeService incomeService, IncomeRepo incomeRepo) {
+    		IncomeService incomeService, IncomeRepo incomeRepo,
+    		DueDateRepo duedateRepo) {
     	
         this.userService = userService;
         this.userValidator = userValidator;
@@ -62,6 +65,7 @@ public class MainController {
         this.duedateService = duedateService;
         this.incomeService = incomeService;
         this.incomeRepo = incomeRepo;
+        this.duedateRepo = duedateRepo;
     }
     
     
@@ -619,6 +623,41 @@ public class MainController {
     		duedateService.createDuedate(duedate);
     		System.out.println("due date created");
     	}
+    	return "redirect:/home";
+    }
+    
+    // renders the edit due date page
+    @RequestMapping("/duedate/{duedateId}/{expId}")
+    public String editDuedateForm(@PathVariable("duedateId") Long duedateId, @PathVariable("expId") Long expId, 
+    		Model model, HttpSession session) {
+    	
+    	// get duedate object
+    	Optional<DueDate> duedateOpt = duedateRepo.findById(duedateId);
+    	DueDate duedate = new DueDate();
+    	if (duedateOpt.isPresent()) {
+    		duedate = duedateOpt.get();
+    	}
+    	
+    	// get expense objet
+    	Optional<Expense> expOpt = expenseRepo.findById(expId);
+    	Expense exp = new Expense();
+    	if (expOpt.isPresent()) {
+    		exp = expOpt.get();
+    	}
+
+    	model.addAttribute("exp", expenseService.decryptExpense(exp));
+    	model.addAttribute("duedate", duedateService.decryptDueDate(duedate));
+
+    	return "manage/duedate/duedate.jsp";
+    }
+    
+    // delete the duedate
+    @RequestMapping(value="/delete/duedate/{duedateId}", method=RequestMethod.DELETE)
+    public String deleteDuedate(@PathVariable("duedateId") Long duedateId, Model model, HttpSession session) {
+		System.out.println("Inside deleteDuedate()");
+		
+    	duedateService.deleteDuedate(duedateId);
+    	System.out.println("Duedate deleted");
     	return "redirect:/home";
     }
     

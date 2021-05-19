@@ -77,7 +77,7 @@
 		   				<td>${exp.amount}</td>
 		   				<td>
 			   				<c:forEach items="${exp.dueDates}" var="duedate">
-			   					<span>${duedate.date}</span>
+			   					<span><a href="/duedate/${duedate.id}/${exp.id}">${duedate.date}</a></span>
 			   				</c:forEach>
 		   				</td>
 		   			</tr>
