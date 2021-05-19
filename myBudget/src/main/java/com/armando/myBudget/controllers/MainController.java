@@ -184,6 +184,26 @@ public class MainController {
         List<Income> incomes = incomeService.decryptIncomes(incomesEncrypted);
         session.setAttribute("incomes", incomes);
         
+        // calculate Free to Spend by getting all incomes total and then subtracting the total of all user expenses
+        Double incomeTotal = 0.00;
+        Double expensesTotal = 0.00;
+        Double freeToSpendMonth = 0.00;
+        for (int i=0; i < incomes.size(); i++) {
+        	Double amount = Double.parseDouble(incomes.get(i).getAmount());
+        	incomeTotal += amount;
+        }
+        for (int i=0; i < expenses.size(); i++) {
+        	// get the duedates of each expense and multiply the expenses amount by the total of dates
+        	// that way we are getting total monthly expense amount
+        	Expense expense = expenses.get(i);
+        	List<DueDate> duedates = expense.getDueDates();
+        	int num = duedates.size();
+        	Double expTotal = Double.parseDouble(expense.getAmount());
+        	expensesTotal += (expTotal * num);
+        }
+        freeToSpendMonth = incomeTotal - expensesTotal;
+        model.addAttribute("freeToSpendMonth", freeToSpendMonth);
+        
         return "home/homePage.jsp";
    
     }

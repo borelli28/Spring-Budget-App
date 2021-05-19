@@ -46,8 +46,8 @@
 	    				<th>Month</th>
 	    			</tr>
 	    			<tr>
-	    				<td>$250</td>
-	    				<td>$1000</td>
+	    				<td>${freeToSpendMonth/4}</td>
+	    				<td>${freeToSpendMonth}</td>
 	    			</tr>
 	    		</table>
     		</div>
