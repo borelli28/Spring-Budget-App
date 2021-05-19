@@ -1,6 +1,7 @@
 package com.armando.myBudget.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.armando.myBudget.models.CashAcct;
+import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
 import com.armando.myBudget.repositories.ExpenseRepo;
 import com.armando.myBudget.services.CashAccountService;
+import com.armando.myBudget.services.DueDateService;
 import com.armando.myBudget.services.ExpenseService;
 import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
@@ -38,10 +41,11 @@ public class MainController {
     private CashAcctRepo cashAcctRepo;
     private ExpenseService expenseService;
     private ExpenseRepo expenseRepo;
+    private DueDateService duedateService;
     
     public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, 
     		CashAcctRepo cashAcctRepo, ExpenseService expenseService,
-    		ExpenseRepo expenseRepo) {
+    		ExpenseRepo expenseRepo, DueDateService duedateService) {
     	
         this.userService = userService;
         this.userValidator = userValidator;
@@ -49,6 +53,7 @@ public class MainController {
         this.cashAcctRepo = cashAcctRepo;
         this.expenseService = expenseService;
         this.expenseRepo = expenseRepo;
+        this.duedateService = duedateService;
     }
     
     
@@ -127,7 +132,24 @@ public class MainController {
         cashAcctService.decryptCashAccts(userCashAccts);
         session.setAttribute("userCashAccts", userCashAccts);
         
-        session.setAttribute("userCashAccts", userCashAccts);
+        // get all the expenses of the user
+        List<Expense> expensesEncrypted = user.getExpenses();
+        
+        // decrypt expenses
+        List<Expense> expenses = expenseService.decryptExpenses(expensesEncrypted);
+        // decrypt expense list of duedates and set the decrypted list as the due dates
+        for (int i=0; i < expenses.size(); i++) {
+        	Expense exp = expenses.get(i);
+        	// send the list of expense due dates to decrypt is there is at least one element inside list
+        	List<DueDate> decryptedDates = new ArrayList<DueDate>();
+        	if(exp.getDueDates().size() > 0) {
+        		decryptedDates.addAll(duedateService.decryptDuedates(exp.getDueDates()));
+        		exp.setDueDates(decryptedDates);
+        	}
+        }
+        
+        model.addAttribute("expenses", expenses);
+        session.setAttribute("expenses", expenses);
         
         // get the user balance by adding all accounts amounts
         Double userBalance = 0.00;
@@ -417,17 +439,21 @@ public class MainController {
         User loggedUser = (User) session.getAttribute("loggedUser");
         model.addAttribute("user", loggedUser);
 
-        // get all the expenses of the user
-        List<Expense> expensesEncrypted = loggedUser.getExpenses();
-        
-        // decrypt expenses
-        List<Expense> expenses = expenseService.decryptExpenses(expensesEncrypted);
-        model.addAttribute("expenses", expenses);
-        session.setAttribute("expenses", expenses);
+        // get decrypted user expenses from session and save it in model
+        model.addAttribute("expenses", session.getAttribute("expenses"));
         
         // for the new expense form
         Expense expense = new Expense();
         model.addAttribute("expense", expense);
+        
+        System.out.println("due date of last created expense");
+        List<Expense> the = (List<Expense>) session.getAttribute("expenses");
+        for (int i=0; i < the.size(); i++) {
+        	if (the.get(i).getDueDates().size() > 0) {
+        		Expense element = the.get(i);
+        		System.out.println(element.getDueDates().get(0));
+        	}
+        }
     	
     	return "manage/expenses/viewExpenses.jsp";
     }
@@ -479,6 +505,13 @@ public class MainController {
     	User user = (User) session.getAttribute("loggedUser");
     	model.addAttribute("user", user);
     	
+    	// pass an empty due date object for adding due date for expenses
+    	DueDate duedate = new DueDate();
+    	model.addAttribute("duedate", duedate);
+    	
+    	// pass errors from duedate form
+    	model.addAttribute("duedateErrors", session.getAttribute("duedateErrors"));
+    	
     	return "/manage/expenses/editExpense.jsp";
     }
     
@@ -510,8 +543,48 @@ public class MainController {
     @RequestMapping(value="/delete/expenses/{expId}", method=RequestMethod.DELETE)
     public String deleteExpense(@PathVariable("expId") Long expId, Model model, HttpSession session) {
 		System.out.println("Inside deleteExpense()");
-    	expenseService.deleteExpense(expId);
+		Optional<Expense> expOpt = expenseRepo.findById(expId);
+		Expense exp = new Expense();
+		if (expOpt.isPresent()) {
+			exp = expOpt.get();
+		}
+		
+		List<DueDate> duedates = exp.getDueDates();
+		
+    	expenseService.deleteExpense(expId, duedates);
     	System.out.println("Expense deleted");
+    	return "redirect:/home";
+    }
+    
+    
+    //
+    // DUE DATE'S METHODS
+    //
+    
+    // handles to data from the assign due date form in editExpense.jsp
+    @RequestMapping(value="/add/duedate/{expId}", method=RequestMethod.POST)
+    public String createDueDate(@Valid @ModelAttribute("duedate") DueDate duedate, BindingResult result,
+    		@PathVariable("expId") Long expId, HttpSession session) {
+		System.out.println("Inside createDueDate() in controller");
+		// reset errors
+		session.removeAttribute("duedateErrors");
+		
+		if (result.hasErrors()) {
+			return "redirect:/edit/expenses/" + expId;
+		}
+		
+		// validate DueDate object and return a list of errors if any
+		List<String> errors = duedateService.validateDueDate(duedate);
+		
+		
+    	if (!errors.isEmpty()) {
+    		System.out.println("Validations error found while creating duedate");
+			session.setAttribute("duedateErrors", errors);
+			return "redirect:/edit/expenses/" + expId;
+    	} else {
+    		duedateService.createDuedate(duedate);
+    		System.out.println("due date created");
+    	}
     	return "redirect:/home";
     }
     

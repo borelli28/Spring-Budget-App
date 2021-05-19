@@ -25,6 +25,7 @@
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 				    <li><a class="dropdown-item" href="/cash-account-view">Cash Accounts</a></li>
 				    <li><a class="dropdown-item" href="/expenses">Expenses</a></li>
+				    <li><a class="dropdown-item" href="#">Income</a></li>
 				    <li><a class="dropdown-item" href="#">Investments</a></li>
 				  </ul>
 				</div>
@@ -70,11 +71,17 @@
 	   				<th>Amount</th>
 	   				<th>Due Date</th>
 	   			</tr>
-	   			<tr>
-	   				<td>Car Payment</td>
-	   				<td>$200</td>
-	   				<td>15 May 2021</td>
-	   			</tr>
+	   			<c:forEach items="${expenses}" var="exp">
+		   			<tr>
+		   				<td>${exp.title}</td>
+		   				<td>${exp.amount}</td>
+		   				<td>
+			   				<c:forEach items="${exp.dueDates}" var="duedate">
+			   					<span>${duedate.date}</span>
+			   				</c:forEach>
+		   				</td>
+		   			</tr>
+	   			</c:forEach>
 	   		</table>
     	</div>
     	

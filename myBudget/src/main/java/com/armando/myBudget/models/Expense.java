@@ -37,7 +37,6 @@ public class Expense {
     @JoinColumn(name="user_id")
     private User user;
     
-    
     // one to many rel with due date
     @OneToMany(mappedBy="expense", fetch=FetchType.LAZY)
     private List<DueDate> dueDates;

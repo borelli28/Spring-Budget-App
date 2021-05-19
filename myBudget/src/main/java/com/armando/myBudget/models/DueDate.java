@@ -1,5 +1,6 @@
 package com.armando.myBudget.models;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -26,15 +27,13 @@ public class DueDate {
     private Long id;
     
     @NotNull
-    @Min(value=1, message="Please enter a valid date")
-    @Max(value=31, message="Please enter a valid date(1-31)")
-    private Integer date;
+    private String date;
     
     @Column(updatable=false)
     private Date createdAt;
     private Date updatedAt;
     
-    // Created by:
+    // Expense due date
     // Join column is the foreign key field
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="expense_id")
@@ -44,7 +43,7 @@ public class DueDate {
 	public DueDate() {
 	}
 	
-	public DueDate(Integer date) {
+	public DueDate(String date) {
 		this.date = date;
 	}
 
@@ -57,11 +56,11 @@ public class DueDate {
 		this.id = id;
 	}
 
-	public Integer getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Integer date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 

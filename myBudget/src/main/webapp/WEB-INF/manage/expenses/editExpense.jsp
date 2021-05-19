@@ -32,6 +32,20 @@
 	            <form:input path="amount" required="true"/>
 	        </p>
 	        <input type="submit" value="Edit" class="btn btn-primary"/>
+	    
+	    <c:forEach items="${duedateErrors}" var="error">
+       		<p style="color: red"><c:out value="${error}"></c:out></p>
+       	</c:forEach>
+	    </form:form>
+	    	<form:form method="post" action="/add/duedate/${expense.id}" modelAttribute="duedate">
+	    	
+	    	<form:input path="expense" type="hidden" value="${expense.id}"/>
+	    	<p>
+	            <form:label path="date">Day:</form:label>
+	            <form:errors path="date" />
+	            <form:input path="date" placeholder="Enter day(Example: 15)" required="true"/>
+	        </p>
+	        <input type="submit" value="Add" class="btn btn-primary"/>
 	    </form:form>
 
 </body>

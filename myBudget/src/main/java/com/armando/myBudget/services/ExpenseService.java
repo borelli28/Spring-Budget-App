@@ -8,8 +8,9 @@ import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.stereotype.Service;
 
 import com.armando.myBudget.llaves.MyKeys;
-import com.armando.myBudget.models.CashAcct;
+import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
+import com.armando.myBudget.repositories.DueDateRepo;
 import com.armando.myBudget.repositories.ExpenseRepo;
 
 @Service
@@ -17,10 +18,12 @@ public class ExpenseService {
 
 	private final ExpenseRepo expenseRepo;
     private final MyKeys myKeys;
+    private final DueDateRepo duedateRepo;
     
-    public ExpenseService(ExpenseRepo expenseRepo, MyKeys myKeys) {
+    public ExpenseService(ExpenseRepo expenseRepo, MyKeys myKeys, DueDateRepo duedateRepo) {
     	this.expenseRepo = expenseRepo;
     	this.myKeys = myKeys;
+    	this.duedateRepo = duedateRepo;
     }
     
 	public void createSaveExpense(Expense expense) {
@@ -148,8 +151,13 @@ public class ExpenseService {
 	}
 	
     // delete an expense
-    public void deleteExpense(Long id) {
-    	expenseRepo.deleteById(id);
+    public void deleteExpense(Long expenseId, List<DueDate> duedates) {
+    	// before deleting expense we need to delete all the due dates
+//    	for (int i=0; i < duedates.size(); i++) {
+//    		duedateRepo.deleteAll(duedates);
+//    	}
+    	duedateRepo.deleteAll(duedates);
+    	expenseRepo.deleteById(expenseId);
     }
 	
 }
