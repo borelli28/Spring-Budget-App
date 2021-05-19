@@ -175,6 +175,12 @@ public class MainController {
         }
         model.addAttribute("userBalance", userBalance);
         
+        // get user incomes
+        List<Income> incomesEncrypted = user.getIncomes();
+        // decrypt incomes
+        List<Income> incomes = incomeService.decryptIncomes(incomesEncrypted);
+        session.setAttribute("incomes", incomes);
+        
         return "home/homePage.jsp";
    
     }
@@ -606,9 +612,8 @@ public class MainController {
         User loggedUser = (User) session.getAttribute("loggedUser");
         model.addAttribute("user", loggedUser);
 
-        // get all the incomes of the user
-        List<Income> incomes = loggedUser.getIncomes();
-        model.addAttribute("incomes", incomes);
+        // get all the decrypted incomes of the user from session
+        model.addAttribute("incomes", session.getAttribute("incomes"));
         
         // for the new income form
         Income income = new Income();
@@ -641,6 +646,15 @@ public class MainController {
     		model.addAttribute("errors", validationErrors);
     		return "/manage/income/viewIncome.jsp";
     	}
+    }
+    
+    // delete income
+    @RequestMapping(value="/delete/income/{incomeId}", method=RequestMethod.DELETE)
+    public String deleteIncome(@PathVariable("incomeId") Long incomeId, Model model, HttpSession session) {
+		System.out.println("Inside deleteIncome()");
+    	incomeService.deleteIncome(incomeId);
+    	System.out.println("income deleted");
+    	return "redirect:/home";
     }
     
 }

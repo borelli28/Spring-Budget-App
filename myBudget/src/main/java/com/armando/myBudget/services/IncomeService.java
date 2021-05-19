@@ -2,11 +2,13 @@ package com.armando.myBudget.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.stereotype.Service;
 
 import com.armando.myBudget.llaves.MyKeys;
+import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.Income;
 import com.armando.myBudget.repositories.IncomeRepo;
 
@@ -72,6 +74,80 @@ public class IncomeService {
 	    }
     	
     	return incomeErrors;
+    }
+    
+//	public void updateCashAcct(CashAcct cashaccount, Long cashAcctId) {
+//		
+//		System.out.println("Inside updateSaveAcct()");
+//		// get OG cash account instance that we are editing
+//		Optional<CashAcct> ogAccount = cashAcctRepo.findById(cashAcctId);
+//		CashAcct editThisAcct = new CashAcct();
+//		if (ogAccount.isPresent()) {
+//			editThisAcct = ogAccount.get();
+//		}
+//		
+//		// encrypt title and amount of cash account before saving to the DB
+//        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+//        aes256TextEncryptor.setPassword(myKeys.getMelchor());
+//		
+//        String titlePlainText = cashaccount.getTitle();        
+//        String amountPlainText = cashaccount.getAmount();
+//        
+//    	String encryptedTitle = aes256TextEncryptor.encrypt(titlePlainText);
+//    	String encryptedAmount = aes256TextEncryptor.encrypt(amountPlainText);
+//    	
+//    	editThisAcct.setTitle(encryptedTitle);
+//    	editThisAcct.setAmount(encryptedAmount);
+//        
+//		cashAcctRepo.save(editThisAcct);
+//	}
+	
+	// decrypt List of incomes
+	public List<Income> decryptIncomes(List<Income> incomes) {
+		System.out.println("Inside decryptCashAccts() in cash account service");
+		// instanciate and pass password to the encryptors that were using
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(myKeys.getMelchor());
+		
+        List<Income> decryptedIncomes = new ArrayList<Income>();
+        
+		// iterate trough each income and decrypt the attributes in there
+		for (int i=0; i < incomes.size(); i++) {
+			Income income = incomes.get(i);
+			
+			String decryptedTitle = aes256TextEncryptor.decrypt(income.getTitle());
+			String decryptedAmount = aes256TextEncryptor.decrypt(income.getAmount());
+			
+			// create a copy of the income because we dont want to decrypt the OG object in the DB
+			Income decryptedIncome = income;
+			decryptedIncome.setTitle(decryptedTitle);
+			decryptedIncome.setAmount(decryptedAmount);
+			
+			// add the decrypted income to the list of the decrypted incomes
+			decryptedIncomes.add(i, decryptedIncome);
+		}
+		return decryptedIncomes;
+	}
+	
+	// decrypt a single income instance
+	public Income decryptIncome(Income income) {
+		// instanciate and pass password to the encryptors that were using
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(myKeys.getMelchor());
+			
+		String decryptedTitle = aes256TextEncryptor.decrypt(income.getTitle());
+		String decryptedAmount = aes256TextEncryptor.decrypt(income.getAmount());
+		
+		// create a copy of the income because we dont want to decrypt the original object in the DB
+		Income decryptedIncome = income;
+		decryptedIncome.setTitle(decryptedTitle);
+		decryptedIncome.setAmount(decryptedAmount);
+
+		return decryptedIncome;
+	}
+	
+    public void deleteIncome(Long id) {
+    	incomeRepo.deleteById(id);
     }
 	
 }
