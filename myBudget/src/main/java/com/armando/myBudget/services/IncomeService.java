@@ -76,31 +76,31 @@ public class IncomeService {
     	return incomeErrors;
     }
     
-//	public void updateCashAcct(CashAcct cashaccount, Long cashAcctId) {
-//		
-//		System.out.println("Inside updateSaveAcct()");
-//		// get OG cash account instance that we are editing
-//		Optional<CashAcct> ogAccount = cashAcctRepo.findById(cashAcctId);
-//		CashAcct editThisAcct = new CashAcct();
-//		if (ogAccount.isPresent()) {
-//			editThisAcct = ogAccount.get();
-//		}
-//		
-//		// encrypt title and amount of cash account before saving to the DB
-//        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
-//        aes256TextEncryptor.setPassword(myKeys.getMelchor());
-//		
-//        String titlePlainText = cashaccount.getTitle();        
-//        String amountPlainText = cashaccount.getAmount();
-//        
-//    	String encryptedTitle = aes256TextEncryptor.encrypt(titlePlainText);
-//    	String encryptedAmount = aes256TextEncryptor.encrypt(amountPlainText);
-//    	
-//    	editThisAcct.setTitle(encryptedTitle);
-//    	editThisAcct.setAmount(encryptedAmount);
-//        
-//		cashAcctRepo.save(editThisAcct);
-//	}
+	public void updateIncome(Income income, Long incomeId) {
+		
+		System.out.println("Inside updateIncome()");
+		// get OG income object that we are editing
+		Optional<Income> ogIncome = incomeRepo.findById(incomeId);
+		Income theIncome = new Income();
+		if (ogIncome.isPresent()) {
+			theIncome = ogIncome.get();
+		}
+		
+		// encrypt title and amount before saving to the DB
+        AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+        aes256TextEncryptor.setPassword(myKeys.getMelchor());
+		
+        String titlePlainText = income.getTitle();        
+        String amountPlainText = income.getAmount();
+        
+    	String encryptedTitle = aes256TextEncryptor.encrypt(titlePlainText);
+    	String encryptedAmount = aes256TextEncryptor.encrypt(amountPlainText);
+    	
+    	theIncome.setTitle(encryptedTitle);
+    	theIncome.setAmount(encryptedAmount);
+        
+		incomeRepo.save(theIncome);
+	}
 	
 	// decrypt List of incomes
 	public List<Income> decryptIncomes(List<Income> incomes) {

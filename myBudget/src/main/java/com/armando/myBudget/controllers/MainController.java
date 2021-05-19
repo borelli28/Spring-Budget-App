@@ -27,6 +27,7 @@ import com.armando.myBudget.models.Income;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
 import com.armando.myBudget.repositories.ExpenseRepo;
+import com.armando.myBudget.repositories.IncomeRepo;
 import com.armando.myBudget.services.CashAccountService;
 import com.armando.myBudget.services.DueDateService;
 import com.armando.myBudget.services.ExpenseService;
@@ -45,11 +46,12 @@ public class MainController {
     private ExpenseRepo expenseRepo;
     private DueDateService duedateService;
     private IncomeService incomeService;
+    private IncomeRepo incomeRepo;
     
     public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, 
     		CashAcctRepo cashAcctRepo, ExpenseService expenseService,
     		ExpenseRepo expenseRepo, DueDateService duedateService,
-    		IncomeService incomeService) {
+    		IncomeService incomeService, IncomeRepo incomeRepo) {
     	
         this.userService = userService;
         this.userValidator = userValidator;
@@ -59,6 +61,7 @@ public class MainController {
         this.expenseRepo = expenseRepo;
         this.duedateService = duedateService;
         this.incomeService = incomeService;
+        this.incomeRepo = incomeRepo;
     }
     
     
@@ -646,6 +649,58 @@ public class MainController {
     		model.addAttribute("errors", validationErrors);
     		return "/manage/income/viewIncome.jsp";
     	}
+    }
+    
+    // renders the edit income form
+    @RequestMapping("/edit/income/{incomeId}")
+    public String editIncomeForm(@PathVariable("incomeId") Long incomeId, Model model, HttpSession session) {
+    	
+    	// get errors from put method
+    	model.addAttribute("errors", session.getAttribute("incomePutErrors"));
+    			
+    	// get the income using the ID and then decrypt the account
+    	Optional<Income> incomeOpt = incomeRepo.findById(incomeId);
+    	Income incomeEncrypted = new Income();
+    	
+    	if (incomeOpt.isPresent()) {
+    		incomeEncrypted = incomeOpt.get();
+    	} else {
+    		return "redirect:/home";
+    	}
+    	
+    	Income income = incomeService.decryptIncome(incomeEncrypted);
+    	model.addAttribute("income", income);
+    	
+    	User user = (User) session.getAttribute("loggedUser");
+    	model.addAttribute("user", user);
+    	
+    	return "/manage/income/editIncome.jsp";
+    }
+    
+    // handles put form to edit income
+    @RequestMapping(value="/edit/income/{incomeId}", method=RequestMethod.PUT)
+    public String editIncome(@Valid @ModelAttribute("income") Income income, BindingResult result, 
+    		@PathVariable("incomeId") Long incomeId, Model model, HttpSession session) {
+    	
+    	System.out.println("Inside income put method");
+    	//reset errors in session
+    	session.removeAttribute("incomePutErrors");
+    	
+    	//  send the income to validate in the service
+    	List<String> validationErrors =  incomeService.validateIncome(income);
+    	//  if there's is no errors then redirect to home. Else save the errors in model and render back the page
+    	if (validationErrors.isEmpty()) {
+    		incomeService.updateIncome(income, incomeId);
+    		return "redirect:/home";
+    	} else {
+    		System.out.println("Errors found when validating Income");
+    		for (int i=0; i < validationErrors.size(); i++) {
+    			System.out.println(validationErrors.get(i));
+    		}
+    		session.setAttribute("incomePutErrors", validationErrors);
+    		return "redirect:/edit/income/" + incomeId;
+    	}
+    	
     }
     
     // delete income
