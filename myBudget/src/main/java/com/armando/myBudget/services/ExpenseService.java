@@ -153,10 +153,8 @@ public class ExpenseService {
     // delete an expense
     public void deleteExpense(Long expenseId, List<DueDate> duedates) {
     	// before deleting expense we need to delete all the due dates
-//    	for (int i=0; i < duedates.size(); i++) {
-//    		duedateRepo.deleteAll(duedates);
-//    	}
     	duedateRepo.deleteAll(duedates);
+    	
     	expenseRepo.deleteById(expenseId);
     }
 	

@@ -25,7 +25,7 @@
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 				    <li><a class="dropdown-item" href="/cash-account-view">Cash Accounts</a></li>
 				    <li><a class="dropdown-item" href="/expenses">Expenses</a></li>
-				    <li><a class="dropdown-item" href="#">Income</a></li>
+				    <li><a class="dropdown-item" href="/income">Income</a></li>
 				    <li><a class="dropdown-item" href="#">Investments</a></li>
 				  </ul>
 				</div>

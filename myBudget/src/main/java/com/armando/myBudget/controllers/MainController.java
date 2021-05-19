@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.armando.myBudget.models.CashAcct;
 import com.armando.myBudget.models.DueDate;
 import com.armando.myBudget.models.Expense;
+import com.armando.myBudget.models.Income;
 import com.armando.myBudget.models.User;
 import com.armando.myBudget.repositories.CashAcctRepo;
 import com.armando.myBudget.repositories.ExpenseRepo;
 import com.armando.myBudget.services.CashAccountService;
 import com.armando.myBudget.services.DueDateService;
 import com.armando.myBudget.services.ExpenseService;
+import com.armando.myBudget.services.IncomeService;
 import com.armando.myBudget.services.UserService;
 import com.armando.myBudget.validator.UserValidator;
 
@@ -42,10 +44,12 @@ public class MainController {
     private ExpenseService expenseService;
     private ExpenseRepo expenseRepo;
     private DueDateService duedateService;
+    private IncomeService incomeService;
     
     public MainController(UserService userService, UserValidator userValidator, CashAccountService cashAcctService, 
     		CashAcctRepo cashAcctRepo, ExpenseService expenseService,
-    		ExpenseRepo expenseRepo, DueDateService duedateService) {
+    		ExpenseRepo expenseRepo, DueDateService duedateService,
+    		IncomeService incomeService) {
     	
         this.userService = userService;
         this.userValidator = userValidator;
@@ -54,6 +58,7 @@ public class MainController {
         this.expenseService = expenseService;
         this.expenseRepo = expenseRepo;
         this.duedateService = duedateService;
+        this.incomeService = incomeService;
     }
     
     
@@ -342,7 +347,7 @@ public class MainController {
         CashAcct cashacct = new CashAcct();
         model.addAttribute("cashacct", cashacct);
         
-        return "/edit/cashAccount/viewCashAccounts.jsp";
+        return "/manage/cashAccount/viewCashAccounts.jsp";
     }
     
     // handles the post data from add new cash account form
@@ -356,7 +361,7 @@ public class MainController {
     	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new cash account");
   
-    		return "/edit/cashAccount/viewCashAccounts.jsp";
+    		return "/manage/cashAccount/viewCashAccounts.jsp";
     	}
     	
     	//  send the cash account to validate in the service
@@ -367,7 +372,7 @@ public class MainController {
     		return "redirect:/home";
     	} else {
     		model.addAttribute("errors", validationErrors);
-    		return "/edit/cashAccount/viewCashAccounts.jsp";
+    		return "/manage/cashAccount/viewCashAccounts.jsp";
     	}
     }
     
@@ -394,7 +399,7 @@ public class MainController {
     	User user = (User) session.getAttribute("loggedUser");
     	model.addAttribute("user", user);
     	
-    	return "/edit/cashAccount/editCashAccount.jsp";
+    	return "/manage/cashAccount/editCashAccount.jsp";
     }
     
     // handles put form to edit cash account
@@ -586,6 +591,56 @@ public class MainController {
     		System.out.println("due date created");
     	}
     	return "redirect:/home";
+    }
+    
+    
+    //
+    // INCOME
+    //
+    
+    
+    // renders income view page
+    @RequestMapping("/income")
+    public String viewIncome(HttpSession session, Model model) {
+    	
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        model.addAttribute("user", loggedUser);
+
+        // get all the incomes of the user
+        List<Income> incomes = loggedUser.getIncomes();
+        model.addAttribute("incomes", incomes);
+        
+        // for the new income form
+        Income income = new Income();
+        model.addAttribute("income", income);
+        
+        return "/manage/income/viewIncome.jsp";
+    }
+    
+    // handles the post data from add new income form
+    @RequestMapping(value="/new/income", method=RequestMethod.POST)
+    public String createIncome(@Valid @ModelAttribute("income") Income income, BindingResult result, 
+    		Model model,
+    		HttpSession session) {
+    	
+		System.out.println("Inside createIncome()");
+
+    	if (result.hasErrors()) {	
+    		System.out.println("Errors found while creating new income");
+  
+    		return "/manage/income/viewIncome.jsp";
+    	}
+    	
+    	//  send the income instance to validate in the service
+    	List<String> validationErrors =  incomeService.validateIncome(income);
+    	//  if there's is no errors then redirect to home. Else save the errors in model and render back the page
+    	if (validationErrors.isEmpty()) {
+    		incomeService.createSaveIncome(income);
+    		return "redirect:/home";
+    	} else {
+    		model.addAttribute("errors", validationErrors);
+    		return "/manage/income/viewIncome.jsp";
+    	}
     }
     
 }
