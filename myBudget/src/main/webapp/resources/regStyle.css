@@ -1,0 +1,22 @@
+/* * {
+	outline: 1px dashed red;
+} */
+
+body {
+	display: flex; 
+	justify-content: center; 
+	flex-wrap: wrap; 
+	text-align: center;
+	background-color: #f2f2f2;
+}
+
+body h1 {
+	width: 100%;
+	margin: 3% 0;
+}
+
+/* overrides bootstrap button color */
+.btn-primary {
+    background-color: #0568A6;
+    /* border-color: blue; */
+}

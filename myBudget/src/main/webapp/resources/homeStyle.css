@@ -1,0 +1,44 @@
+/* * {
+	outline: 1px dashed red;
+}  */
+
+body {
+	background-color: #f2f2f2;
+}
+
+main nav {
+	border: 2px solid black;
+}
+
+main nav .btn-secondary {
+	background-color: #0568A6;
+}
+
+main table {
+	width: 100%;
+}
+/* make a link in table white */
+main table a {
+	color: white;
+}
+
+main table .table, .table-dark {
+	background-color: #0568A6;
+}
+
+main #budget-tables-container {
+	display: flex; 
+	justify-content: space-around; 
+	text-align: center; 
+	margin: 2% 1%;
+}
+
+main #expenses-table {
+	text-align: center; 
+	margin: 2% 10%;
+}
+
+main #expense-table-container {
+	display: flex;
+	justify-content: center;
+}

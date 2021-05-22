@@ -27,8 +27,8 @@
    				<td>${exp.title}</td>
    				<td>${duedate.date}</td>
    				<td style="display: flex; justify-content: space-between">
-   					<a href="/edit/duedate/${duedate.id}">Edit</a>
-    				<p> | </p>
+<%--    					<a href="/edit/duedate/${duedate.id}">Edit</a>
+    				<p> | </p> --%>
 					<form action="/delete/duedate/${duedate.id}" method="post">
 						<input type="hidden" value="delete" name="_method" /> 
 						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
