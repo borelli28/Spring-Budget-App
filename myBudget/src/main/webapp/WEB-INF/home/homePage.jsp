@@ -51,8 +51,8 @@
 	    				<th>Month</th>
 	    			</tr>
 	    			<tr>
-	    				<td>${freeToSpendMonth/4}</td>
-	    				<td>${freeToSpendMonth}</td>
+	    				<td>$${freeToSpendMonth/4}</td>
+	    				<td>$${freeToSpendMonth}</td>
 	    			</tr>
 	    		</table>
     		</div>
@@ -63,7 +63,7 @@
 	    				<th>Balance</th>
 	    			</tr>
 	    			<tr>
-	    				<td>${userBalance}</td>
+	    				<td>$${userBalance}</td>
 	    			</tr>
 	    		</table>
     		</div>
@@ -80,7 +80,7 @@
 		   			<c:forEach items="${expenses}" var="exp">
 			   			<tr>
 			   				<td>${exp.title}</td>
-			   				<td>${exp.amount}</td>
+			   				<td>$${exp.amount}</td>
 			   				<td>
 				   				<c:forEach items="${exp.dueDates}" var="duedate">
 				   					<span><a href="/duedate/${duedate.id}/${exp.id}">${duedate.date}</a></span>

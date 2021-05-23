@@ -2,21 +2,49 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+	
+	<spring:url value="/resources/incomeStyles/incomeStyle.css" var="css" />
+	<link href="${css}" rel="stylesheet" />
 	<title>Incomes</title>
 </head>
 <body>
 
+	<nav class="navbar navbar-dark bg-dark">
+   		<div class="container-fluid">
+    		<a class="navbar-brand" href="/home">Dashboard</a>
+    		<div class="dropdown">
+			  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+			  	Manage
+			  </a>
+			
+			  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+			    <li><a class="dropdown-item" href="/cash-account-view">Cash Accounts</a></li>
+			    <li><a class="dropdown-item" href="/expenses">Expenses</a></li>
+			    <li><a class="dropdown-item" href="/income">Income</a></li>
+			    <li><a class="dropdown-item" href="#">Investments</a></li>
+			  </ul>
+			</div>
+    		<a class="navbar-brand" href="/account">Account</a>
+    		<form id="logoutForm" method="POST" action="/logout">
+		        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		        <button type="submit" class="btn btn-danger">Logout</button>
+		    </form>
+	    </div>
+   	</nav>
+
 	<header>
-		<h1>Welcome to your Incomes</h1>
+		<h1>Income</h1>
 	</header>
 	
 	<main style="display: flex; justify-content: center">
-		<table class="table-striped table-hover table-bordered">
+		<table class="table table-dark table-striped table-hover table-bordered">
    			<tr>
    				<th>Income Source</th>
    				<th>Total</th>
@@ -32,7 +60,7 @@
    			<c:forEach items="${incomes}" var="income">
 	   			<tr>
 	   				<td>${income.title}</td>
-	   				<td>${income.amount}</td>
+	   				<td>$${income.amount}</td>
 	   				<td style="display: flex; justify-content: space-between">
 	   					<a href="/edit/income/${income.id}">Edit</a>
 	    				<p> | </p>
@@ -66,7 +94,7 @@
 	            <form:label path="amount">Amount: $</form:label>
 	            <form:input type="number" step="0.01" path="amount"/>
 	        </p>
-	        <button type="submit">Create</button>
+	        <button type="submit" class="btn btn-primary">Create</button>
 	    </form:form>
   	</div>
 	

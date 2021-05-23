@@ -1,0 +1,46 @@
+/* * {
+	outline: 1px dashed red;
+}  */
+
+body {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	background-color: #f2f2f2;
+	text-align: center;
+}
+
+nav {
+	border: 2px solid black;
+	width: 100%;
+}
+
+nav .btn-secondary {
+	background-color: #0568A6;
+}
+
+header {
+	width: 100%;
+	margin: 2% 0;
+}
+
+main {
+	width: 100%;
+	margin: 4% 0;
+}
+
+main table #separator {
+	margin: 0 1%;
+}
+
+main table a {
+	color: white;
+}
+
+main table .table, .table-dark {
+	background-color: #0568A6;
+}
+
+#add-new-cashAccount .btn-primary {
+	background-color: #0568A6;
+}

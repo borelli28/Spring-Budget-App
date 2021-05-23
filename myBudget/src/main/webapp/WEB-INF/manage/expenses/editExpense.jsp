@@ -2,11 +2,16 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+	
+	<spring:url value="/resources/expStyles/editExpStyle.css" var="css" />
+	<link href="${css}" rel="stylesheet" />	
 	<title>Edit Expense</title>
 </head>
 <body>
@@ -41,7 +46,7 @@
 	    	
 	    	<form:input path="expense" type="hidden" value="${expense.id}"/>
 	    	<p>
-	            <form:label path="date">Day:</form:label>
+	            <form:label path="date">Enter Due Day:</form:label>
 	            <form:errors path="date" />
 	            <form:input path="date" placeholder="Enter day(Example: 15)" required="true"/>
 	        </p>
