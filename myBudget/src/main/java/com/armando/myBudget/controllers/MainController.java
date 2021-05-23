@@ -220,6 +220,11 @@ public class MainController {
     public String account(Model model, HttpSession session) {
         User loggedUser = (User) session.getAttribute("loggedUser");
         model.addAttribute("user", loggedUser);
+        
+        // reset all validations errors from the edit forms( in case user uses <a>go back</a> link after failed submission)
+        session.removeAttribute("userNameErrors");
+        session.removeAttribute("userEmailErrors");
+        session.removeAttribute("userPasswordErrors");
            
         return "account/account.jsp";
     }

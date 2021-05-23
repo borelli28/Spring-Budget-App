@@ -1,0 +1,28 @@
+/* * {
+	outline: 1px dashed red;
+}
+ */
+body {
+	background-color: #f2f2f2;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	text-align: center;
+}
+
+h1, #form-errors, form {
+	width: 100%;
+	margin: 2% 0;
+}
+
+#form-errors {
+	color: red;
+}
+
+#buttons .btn-primary {
+	background-color: #0568A6;
+}
+
+#buttons a {
+	color: #0568A6;
+}

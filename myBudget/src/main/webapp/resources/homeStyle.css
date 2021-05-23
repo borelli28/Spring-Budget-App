@@ -1,6 +1,6 @@
 /* * {
 	outline: 1px dashed red;
-}  */
+} */
 
 body {
 	background-color: #f2f2f2;
@@ -42,3 +42,19 @@ main #expense-table-container {
 	display: flex;
 	justify-content: center;
 }
+
+@media only screen and (max-width: 500px) {
+	
+	main nav {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		text-align: center;
+	}
+	
+	main nav #home-tag, #manage-dropdown, #account-tag, #logoutForm {
+		width: 100%;
+	}
+	
+}
+

@@ -24,8 +24,8 @@
     	
     	<nav class="navbar navbar-dark bg-dark">
     		<div class="container-fluid">
-	    		<a class="navbar-brand" href="/home">Dashboard</a>
-	    		<div class="dropdown">
+	    		<a id="home-tag" class="navbar-brand" href="/home">Dashboard</a>
+	    		<div id="manage-dropdown" class="dropdown">
 				  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
 				  	Manage
 				  </a>
@@ -37,7 +37,7 @@
 				    <li><a class="dropdown-item" href="#">Investments</a></li>
 				  </ul>
 				</div>
-	    		<a class="navbar-brand" href="/account">Account</a>
+	    		<a id="account-tag" class="navbar-brand" href="/account">Account</a>
 	    		<form id="logoutForm" method="POST" action="/logout">
 			        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 			        <button type="submit" class="btn btn-danger">Logout</button>

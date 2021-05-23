@@ -44,3 +44,18 @@ main table .table, .table-dark {
 #add-new-expense .btn-primary {
 	background-color: #0568A6;
 }
+
+@media only screen and (max-width: 500px) {
+	
+	nav {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		text-align: center;
+	}
+	
+	nav #home-tag, #manage-dropdown, #account-tag, #logoutForm {
+		width: 100%;
+	}
+	
+}

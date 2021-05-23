@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +13,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<!-- Description for Search Engines -->
 	<meta name="Personal Finances Web App">
+	
+	<spring:url value="/resources/accountStyles/editAccountStyle.css" var="css" />
+	<link href="${css}" rel="stylesheet" />
 	
 	<title>Change Email</title>
 </head>
@@ -27,7 +32,10 @@
             <form:label path="email" for="email">Email</form:label>
             <form:input path="email" name="email"/>
         </p>
-        <button type="submit" class="btn btn-primary">Submit Change</button>
+        <div id="buttons">
+	        <a href="/account">Go Back</a>
+	        <button type="submit" class="btn btn-primary">Submit Change</button>
+        </div>
     </form:form>
 </body>
 </html>

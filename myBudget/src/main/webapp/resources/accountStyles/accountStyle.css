@@ -1,13 +1,12 @@
 /* * {
 	outline: 1px dashed red;
-}  */
+} */
 
 body {
+	background-color: #f2f2f2;
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	background-color: #f2f2f2;
-	text-align: center;
 }
 
 nav {
@@ -15,35 +14,39 @@ nav {
 	width: 100%;
 }
 
+main {
+	width: 100%;
+	margin: 3% 1%;
+}
+
 nav .btn-secondary {
 	background-color: #0568A6;
 }
 
-header {
+main table {
 	width: 100%;
-	margin: 2% 0;
-}
-
-main {
-	width: 100%;
-	margin: 4% 0;
-}
-
-main table #separator {
-	margin: 0 1%;
-}
-
-main table a {
-	color: white;
 }
 
 main table .table, .table-dark {
 	background-color: #0568A6;
 }
 
-#add-new-cashAccount .btn-primary {
+main #make-changes-button {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	text-align: center;
+}
+
+main #make-changes-button form {
+	width: 100%;
+	margin: 0.5% 0;
+}
+
+main #make-changes-button .btn-primary {
 	background-color: #0568A6;
 }
+
 
 @media only screen and (max-width: 500px) {
 	
