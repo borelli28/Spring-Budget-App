@@ -5,10 +5,14 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Description for Search Engines -->
+	<meta name="Personal Finances Web App">
 	
 	<spring:url value="/resources/expStyles/expensesStyle.css" var="css" />
 	<link href="${css}" rel="stylesheet" />

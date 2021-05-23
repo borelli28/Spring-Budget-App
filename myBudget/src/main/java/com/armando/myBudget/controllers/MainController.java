@@ -752,7 +752,6 @@ public class MainController {
     // delete income
     @RequestMapping(value="/delete/income/{incomeId}", method=RequestMethod.DELETE)
     public String deleteIncome(@PathVariable("incomeId") Long incomeId, Model model, HttpSession session) {
-		System.out.println("Inside deleteIncome()");
     	incomeService.deleteIncome(incomeId);
     	System.out.println("income deleted");
     	return "redirect:/home";
