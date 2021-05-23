@@ -22,7 +22,7 @@
 <body>
     <h1>Change Password</h1>
     <div id="form-errors" style="color: red">
-    	<c:forEach items="${userPassErrors}" var="error">
+    	<c:forEach items="${userPasswordErrors}" var="error">
     		<p><c:out value="${error.getDefaultMessage()}"></c:out></p>
     	</c:forEach>
     </div>
