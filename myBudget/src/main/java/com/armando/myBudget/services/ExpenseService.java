@@ -27,7 +27,6 @@ public class ExpenseService {
     }
     
 	public void createSaveExpense(Expense expense) {
-		System.out.println("Inside createSaveExpense()");
 		// encrypt title and amount of expense before saving to the DB
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
@@ -45,8 +44,7 @@ public class ExpenseService {
 	}
 	
 	public void updateExpense(Expense expense, Long expId) {
-		
-		System.out.println("Inside updateExpense()");
+
 		// get OG cash account instance that we are editing
 		Optional<Expense> ogExp = expenseRepo.findById(expId);
 		Expense editThisExpense = new Expense();
@@ -95,7 +93,7 @@ public class ExpenseService {
     		//assert that the string is valid number
     		int i = amountStr.lastIndexOf('.');
     		if(i != -1 && amountStr.substring(i + 1).length() == 2) {
-    		    System.out.println("The amount " + amountStr + " has two digits after dot");
+    		    System.out.println();
     		} else {
     			// amount does not have two decimal places so we pass the error message
     			expenseErrors.add("Please enter two decimal digits after the number. Example: $250.00");
@@ -107,7 +105,7 @@ public class ExpenseService {
     
 	// decrypt List of expenses
 	public List<Expense> decryptExpenses(List<Expense> expenses) {
-		System.out.println("Inside decryptExpenses() in expenses service");
+
 		// instanciate and pass password to the encryptors that were using
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
@@ -129,7 +127,7 @@ public class ExpenseService {
 			// add the decrypted Expense to the list of the decrypted accounts
 			decryptedexpenses.add(i, decryptedExpense);
 		}
-		System.out.println("Done decrypting all expenses info now returning the list");
+
 		return decryptedexpenses;
 	}
 	

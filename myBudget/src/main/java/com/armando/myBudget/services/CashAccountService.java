@@ -24,7 +24,6 @@ public class CashAccountService {
 	}
 	
 	public void createSaveAcct(CashAcct cashaccount) {
-		System.out.println("Inside createSaveAcct()");
 		// encrypt title and amount of cash account before saving to the DB
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
@@ -46,8 +45,7 @@ public class CashAccountService {
 	}
 	
 	public void updateCashAcct(CashAcct cashaccount, Long cashAcctId) {
-		
-		System.out.println("Inside updateSaveAcct()");
+
 		// get OG cash account instance that we are editing
 		Optional<CashAcct> ogAccount = cashAcctRepo.findById(cashAcctId);
 		CashAcct editThisAcct = new CashAcct();
@@ -73,7 +71,6 @@ public class CashAccountService {
 	
 	// decrypt List of cash accounts
 	public List<CashAcct> decryptCashAccts(List<CashAcct> cashaccounts) {
-		System.out.println("Inside decryptCashAccts() in cash account service");
 		// instanciate and pass password to the encryptors that were using
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
@@ -95,7 +92,6 @@ public class CashAccountService {
 			// add the decrypted account to the list of the decrypted accounts
 			decryptedCashAccounts.add(i, decryptedAccount);
 		}
-		System.out.println("Done decrypting all cash accounts info now return the list");
 		return decryptedCashAccounts;
 	}
 	
@@ -146,7 +142,7 @@ public class CashAccountService {
     		//assert that the string is valid number
     		int i = amountStr.lastIndexOf('.');
     		if(i != -1 && amountStr.substring(i + 1).length() == 2) {
-    		    System.out.println("The amount " + amountStr + " has two digits after dot");
+    		    System.out.println();
     		} else {
     			// amount does not have two decimal places so we pass the error message
     			cashAccountErrors.add("Please enter two decimal digits after the number. Example: $250.00");

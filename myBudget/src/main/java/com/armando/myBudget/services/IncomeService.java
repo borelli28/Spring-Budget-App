@@ -24,7 +24,7 @@ public class IncomeService {
 	}
 	
 	public void createSaveIncome(Income income) {
-		System.out.println("Inside createSaveIncome() in service");
+
 		// encrypt title and amount of cash account before saving to the DB
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
@@ -66,7 +66,7 @@ public class IncomeService {
     		//assert that the string is valid number
     		int i = amountStr.lastIndexOf('.');
     		if(i != -1 && amountStr.substring(i + 1).length() == 2) {
-    		    System.out.println("The amount " + amountStr + " has two digits after dot");
+    		    System.out.println();
     		} else {
     			// amount does not have two decimal places so we pass the error message
     			incomeErrors.add("Please enter two decimal digits after the number. Example: $250.00");
@@ -77,8 +77,7 @@ public class IncomeService {
     }
     
 	public void updateIncome(Income income, Long incomeId) {
-		
-		System.out.println("Inside updateIncome()");
+
 		// get OG income object that we are editing
 		Optional<Income> ogIncome = incomeRepo.findById(incomeId);
 		Income theIncome = new Income();
@@ -104,7 +103,7 @@ public class IncomeService {
 	
 	// decrypt List of incomes
 	public List<Income> decryptIncomes(List<Income> incomes) {
-		System.out.println("Inside decryptCashAccts() in cash account service");
+
 		// instanciate and pass password to the encryptors that were using
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());

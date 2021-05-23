@@ -25,7 +25,6 @@ public class DueDateService {
     }
 	
 	public void createDuedate(DueDate duedate) {
-		System.out.println("Inside createDuedate() in service");
 
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());
@@ -72,7 +71,7 @@ public class DueDateService {
 	
 	// decrypt List of due dates
 	public List<DueDate> decryptDuedates(List<DueDate> duedates) {
-		System.out.println("Inside decrypDuedates in expenses service");
+
 		// instanciate and pass password to the encryptors that were using
         AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
         aes256TextEncryptor.setPassword(myKeys.getMelchor());

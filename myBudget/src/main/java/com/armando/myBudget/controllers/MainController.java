@@ -388,8 +388,6 @@ public class MainController {
     public String createCashAcct(@Valid @ModelAttribute("cashacct") CashAcct cashacct, BindingResult result, 
     		Model model,
     		HttpSession session) {
-    	
-		System.out.println("Inside createCashAcct()");
 
     	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new cash account");
@@ -438,8 +436,7 @@ public class MainController {
     // handles put form to edit cash account
     @RequestMapping(value="/edit/cashAcct/{accountId}", method=RequestMethod.PUT)
     public String editCashAccount(@Valid @ModelAttribute("cashAcct") CashAcct cashAcct, BindingResult result, @PathVariable("accountId") Long accountId, Model model, HttpSession session) {
-    	
-    	System.out.println("Inside edit cash account put method");
+
     	//reset errors in session
     	session.removeAttribute("cashAcctPutErrors");
     	
@@ -463,7 +460,7 @@ public class MainController {
     // handles the delete data to delete the cash account
     @RequestMapping(value="/delete/cashAcct/{accountId}", method=RequestMethod.DELETE)
     public String deleteCashAcct(@PathVariable("accountId") Long accountId, Model model, HttpSession session) {
-		System.out.println("Inside deleteCashAcct()");
+    	
     	cashAcctService.deleteCashAcct(accountId);
     	System.out.println("Cash Account deleted");
     	return "redirect:/home";
@@ -484,12 +481,10 @@ public class MainController {
         Expense expense = new Expense();
         model.addAttribute("expense", expense);
         
-        System.out.println("due date of last created expense");
         List<Expense> the = (List<Expense>) session.getAttribute("expenses");
         for (int i=0; i < the.size(); i++) {
         	if (the.get(i).getDueDates().size() > 0) {
         		Expense element = the.get(i);
-        		System.out.println(element.getDueDates().get(0));
         	}
         }
     	
@@ -501,8 +496,6 @@ public class MainController {
     public String createExpense(@Valid @ModelAttribute("expense") Expense expense, BindingResult result, 
     		Model model,
     		HttpSession session) {
-    	
-		System.out.println("Inside createExpense()");
     	
     	//  send the expense to validate in the service
     	List<String> validationErrors =  expenseService.validateExpense(expense);
@@ -603,7 +596,7 @@ public class MainController {
     @RequestMapping(value="/add/duedate/{expId}", method=RequestMethod.POST)
     public String createDueDate(@Valid @ModelAttribute("duedate") DueDate duedate, BindingResult result,
     		@PathVariable("expId") Long expId, HttpSession session) {
-		System.out.println("Inside createDueDate() in controller");
+
 		// reset errors
 		session.removeAttribute("duedateErrors");
 		
@@ -654,7 +647,6 @@ public class MainController {
     // delete the duedate
     @RequestMapping(value="/delete/duedate/{duedateId}", method=RequestMethod.DELETE)
     public String deleteDuedate(@PathVariable("duedateId") Long duedateId, Model model, HttpSession session) {
-		System.out.println("Inside deleteDuedate()");
 		
     	duedateService.deleteDuedate(duedateId);
     	System.out.println("Duedate deleted");
@@ -689,8 +681,6 @@ public class MainController {
     public String createIncome(@Valid @ModelAttribute("income") Income income, BindingResult result, 
     		Model model,
     		HttpSession session) {
-    	
-		System.out.println("Inside createIncome()");
 
     	if (result.hasErrors()) {	
     		System.out.println("Errors found while creating new income");
@@ -740,8 +730,7 @@ public class MainController {
     @RequestMapping(value="/edit/income/{incomeId}", method=RequestMethod.PUT)
     public String editIncome(@Valid @ModelAttribute("income") Income income, BindingResult result, 
     		@PathVariable("incomeId") Long incomeId, Model model, HttpSession session) {
-    	
-    	System.out.println("Inside income put method");
+
     	//reset errors in session
     	session.removeAttribute("incomePutErrors");
     	
@@ -753,9 +742,7 @@ public class MainController {
     		return "redirect:/home";
     	} else {
     		System.out.println("Errors found when validating Income");
-    		for (int i=0; i < validationErrors.size(); i++) {
-    			System.out.println(validationErrors.get(i));
-    		}
+
     		session.setAttribute("incomePutErrors", validationErrors);
     		return "redirect:/edit/income/" + incomeId;
     	}

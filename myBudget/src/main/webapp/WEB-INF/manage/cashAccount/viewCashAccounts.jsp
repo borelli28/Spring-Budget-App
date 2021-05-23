@@ -61,7 +61,7 @@
    			<c:forEach items="${accounts}" var="account">
 	   			<tr>
 	   				<td>${account.title}</td>
-	   				<td>${account.amount}</td>
+	   				<td>$${account.amount}</td>
 	   				<td style="display: flex; justify-content: space-between">
 	   					<a href="/edit/cashAcct/${account.id}">Edit</a>
 	    				<p> | </p>
