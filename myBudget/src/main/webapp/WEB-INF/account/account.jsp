@@ -50,13 +50,13 @@
    				<th>First Name</th>
    				<th>Last Name</th>
    				<th>Email</th>
-   				<th>Password</th>
+   				<th class="password-cell">Password</th>
    			</tr>
    			<tr>
    				<td>${user.firstName}</td>
    				<td>${user.lastName}</td>
    				<td>${user.email}</td>
-   				<td>*********</td>
+   				<td class="password-cell">*********</td>
    			</tr>
    		</table>
    		

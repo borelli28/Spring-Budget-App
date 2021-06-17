@@ -1,6 +1,6 @@
 /* * {
 	outline: 1px dashed red;
-} */
+}  */
 
 body {
 	background-color: #f2f2f2;
@@ -55,10 +55,15 @@ main #make-changes-button .btn-primary {
 		justify-content: center;
 		flex-wrap: wrap;
 		text-align: center;
+		width: 100%;
 	}
 	
 	nav #home-tag, #manage-dropdown, #account-tag, #logoutForm {
 		width: 100%;
+	}
+	
+	.password-cell {
+		display: none;
 	}
 	
 }

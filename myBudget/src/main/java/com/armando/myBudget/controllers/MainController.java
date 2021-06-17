@@ -103,27 +103,31 @@ public class MainController {
     		@RequestParam(value="error", required=false) String error, 
     		@RequestParam(value="logout", required=false) String logout,
     		Model model) {
+    	
         if(error != null && error != "") {
             model.addAttribute("errorMessage", "Invalid Credentials, Please try again.");
+            return "user/loginPage.jsp";
         }
+        
         if(logout != null) {
             model.addAttribute("logoutMessage", "Logout Successful!");
         }
         return "user/loginPage.jsp";
     }
+   
     
-    // Home/Admin Methods
-    @RequestMapping("/admin")
-    public String adminPage(Principal principal, Model model) {
-    	
-        String email = principal.getName();
-        User user = userService.findByEmail(email);
-        
-        // decrypt first and last name of the user
-        userService.decryptUser(user);
-        model.addAttribute("currentUser", user);
-        return "home/adminPage.jsp";
-    }
+//    // Home/Admin Methods
+//    @RequestMapping("/admin")
+//    public String adminPage(Principal principal, Model model) {
+//    	
+//        String email = principal.getName();
+//        User user = userService.findByEmail(email);
+//        
+//        // decrypt first and last name of the user
+//        userService.decryptUser(user);
+//        model.addAttribute("currentUser", user);
+//        return "home/adminPage.jsp";
+//    }
     
     @RequestMapping(value = {"/", "/home"})
     public String home(Principal principal, Model model, HttpSession session) {
